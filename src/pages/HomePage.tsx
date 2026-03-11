@@ -4,12 +4,14 @@ import Navbar from "../components/Navbar"
 import Hero from "../components/Hero"
 import HowItWorks from "../components/HowItWorks"
 import Features from "../components/Features"
+import SkillComparisonChart from "../components/SkillComparisonChart"
 import SkillDiscovery from "../components/SkillDiscovery"
 import Opportunities from "../components/Opportunities"
 import BusinessRoadmap from "../components/BusinessRoadmap"
 import SuccessStory from "../components/SuccessStory"
 import AIChatAssistant from "../components/AIChatAssistant"
 import Footer from "../components/Footer"
+import BackToTop from "../components/BackToTop"
 
 export default function HomePage() {
   const [selectedSkill, setSelectedSkill] = useState<string | null>(null)
@@ -26,12 +28,14 @@ export default function HomePage() {
       <Hero />
       <HowItWorks />
       <Features />
+      <SkillComparisonChart />
       <SkillDiscovery onSelectSkill={handleSkillSelect} />
       <Opportunities skill={selectedSkill} score={confidenceScore} />
       <BusinessRoadmap skill={selectedSkill} />
       <SuccessStory />
       <AIChatAssistant />
       <Footer />
+      <BackToTop />
     </div>
   )
 }

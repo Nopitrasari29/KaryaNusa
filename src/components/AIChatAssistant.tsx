@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 
-type Message = { role: "user" | "ai"; text: string }
+type Message = { role: "user" | "ai"; text: string; typing?: boolean }
 
 const suggestedQuestions = [
   "Skill apa yang paling menghasilkan?",
@@ -15,12 +15,35 @@ const dummyReplies = [
 ]
 let replyIdx = 0
 
+function TypingMessage({ text, onDone }: { text: string; onDone: () => void }) {
+  const [displayed, setDisplayed] = useState("")
+
+  useEffect(() => {
+    setDisplayed("")
+    let i = 0
+    const interval = setInterval(() => {
+      i++
+      setDisplayed(text.slice(0, i))
+      if (i >= text.length) { clearInterval(interval); onDone() }
+    }, 16)
+    return () => clearInterval(interval)
+  }, [text])
+
+  return (
+    <span style={{ whiteSpace: "pre-wrap" }}>
+      {displayed}
+      <span style={{ display: "inline-block", width: 2, height: "1em", background: "#1F7A63", marginLeft: 2, verticalAlign: "text-bottom", animation: "cursorBlink 0.7s infinite" }} />
+    </span>
+  )
+}
+
 export default function AIChatAssistant() {
   const [messages, setMessages] = useState<Message[]>([
     { role: "ai", text: "Halo! Saya AI Assistant KARYANUSA 👋\n\nSaya siap membantu kamu menemukan peluang usaha dari skill yang kamu miliki. Tanyakan apa saja tentang memulai bisnis, strategi pemasaran, atau pengembangan skill!" },
   ])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
+  const [typingIdx, setTypingIdx] = useState<number | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -34,9 +57,17 @@ export default function AIChatAssistant() {
     setMessages(newMsgs)
     setInput("")
     setLoading(true)
-    await new Promise(r => setTimeout(r, 1100))
-    setMessages([...newMsgs, { role: "ai", text: dummyReplies[replyIdx++ % dummyReplies.length] }])
+    await new Promise(r => setTimeout(r, 900))
+    const reply = dummyReplies[replyIdx++ % dummyReplies.length]
+    const aiIdx = newMsgs.length
+    setMessages([...newMsgs, { role: "ai", text: reply, typing: true }])
+    setTypingIdx(aiIdx)
     setLoading(false)
+  }
+
+  const handleDoneTyping = (idx: number) => {
+    setTypingIdx(null)
+    setMessages(prev => prev.map((m, i) => i === idx ? { ...m, typing: false } : m))
   }
 
   const handleKey = (e: React.KeyboardEvent) => {
@@ -51,10 +82,11 @@ export default function AIChatAssistant() {
 
         @keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes dotBounce { 0%,80%,100% { transform: translateY(0); opacity:0.4; } 40% { transform: translateY(-5px); opacity:1; } }
+        @keyframes cursorBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .msg-bubble { animation: msgIn 0.25s ease both; line-height: 1.65; font-size: 0.87rem; white-space: pre-wrap; max-width: 78%; }
-        .msg-ai   { background: #fff; border: 1px solid #EEF0F4; color: #1E3A5F; border-radius: 4px 14px 14px 14px; padding: 10px 13px; box-shadow: 0 1px 6px rgba(30,58,95,0.06); }
-        .msg-user { background: linear-gradient(135deg, #1F7A63, #25957A); color: #fff; border-radius: 14px 4px 14px 14px; padding: 10px 13px; margin-left: auto; box-shadow: 0 3px 12px rgba(31,122,99,0.22); }
+        .msg-bubble { animation: msgIn 0.25s ease both; line-height: 1.65; font-size: 0.87rem; max-width: 78%; }
+        .msg-ai   { background: #fff; border: 1px solid #EEF0F4; color: #1E3A5F; border-radius: 4px 14px 14px 14px; padding: 10px 13px; box-shadow: 0 1px 6px rgba(30,58,95,0.06); white-space: pre-wrap; }
+        .msg-user { background: linear-gradient(135deg, #1F7A63, #25957A); color: #fff; border-radius: 14px 4px 14px 14px; padding: 10px 13px; margin-left: auto; box-shadow: 0 3px 12px rgba(31,122,99,0.22); white-space: pre-wrap; }
 
         .dot-typing span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #94A3B8; margin: 0 2px; }
         .dot-typing span:nth-child(1) { animation: dotBounce 1.2s ease infinite 0s; }
@@ -75,10 +107,9 @@ export default function AIChatAssistant() {
 
       <section id="assistant" className="chat-section py-14 sm:py-16 bg-white">
         <div className="max-w-2xl mx-auto px-5 sm:px-6">
-
           <div className="text-center mb-7">
             <span style={{ display: "inline-block", background: "rgba(31,122,99,0.09)", color: "#1F7A63", fontSize: "12px", fontWeight: 600, padding: "5px 14px", borderRadius: "100px", marginBottom: "12px", border: "1px solid rgba(31,122,99,0.18)" }}>
-              Langkah 3 dari 3
+              Langkah 4 dari 4
             </span>
             <h2 style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "clamp(1.55rem, 3vw, 2.4rem)", fontWeight: 700, color: "#1E3A5F", letterSpacing: "-0.02em" }}>
               AI <span style={{ color: "#1F7A63" }}>Business Assistant</span>
@@ -89,7 +120,6 @@ export default function AIChatAssistant() {
           </div>
 
           <div style={{ background: "#F8FAFB", border: "1.5px solid #EEF0F4", borderRadius: "16px", overflow: "hidden", boxShadow: "0 3px 18px rgba(30,58,95,0.07)" }}>
-
             {/* Header */}
             <div style={{ background: "#fff", borderBottom: "1px solid #EEF0F4", padding: "11px 15px", display: "flex", alignItems: "center", gap: 9 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #1F7A63, #25957A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>🤖</div>
@@ -109,7 +139,12 @@ export default function AIChatAssistant() {
                   {m.role === "ai" && (
                     <div style={{ width: 24, height: 24, borderRadius: 6, background: "linear-gradient(135deg, #1F7A63, #25957A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, flexShrink: 0, marginTop: 1 }}>🤖</div>
                   )}
-                  <div className={`msg-bubble ${m.role === "ai" ? "msg-ai" : "msg-user"}`}>{m.text}</div>
+                  <div className={`msg-bubble ${m.role === "ai" ? "msg-ai" : "msg-user"}`}>
+                    {m.role === "ai" && m.typing && typingIdx === i
+                      ? <TypingMessage text={m.text} onDone={() => handleDoneTyping(i)} />
+                      : m.text
+                    }
+                  </div>
                 </div>
               ))}
               {loading && (
