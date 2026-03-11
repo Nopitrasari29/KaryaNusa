@@ -1,73 +1,116 @@
-# React + TypeScript + Vite
+# 🌿 KaryaNusa
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Platform AI yang membantu masyarakat mengubah skill sehari-hari menjadi peluang ekonomi nyata.
 
-Currently, two official plugins are available:
+**Subtema:** Ekonomi + Sosial | **Stack:** React + TypeScript + Vite + TailwindCSS
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Alur Platform
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+User buka KARYANUSA
+  → Jawab 7 pertanyaan (Skill Discovery)
+  → AI deteksi skill dominan + confidence score
+  → Lihat 3 rekomendasi peluang usaha
+  → Ikuti Business Roadmap (checklist 4 fase)
+  → Konsultasi lewat AI Chat Assistant
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📁 Struktur Folder
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── components/
+│   ├── Navbar.tsx
+│   ├── Hero.tsx
+│   ├── HowItWorks.tsx
+│   ├── Features.tsx
+│   ├── SkillDiscovery.tsx
+│   ├── Opportunities.tsx
+│   ├── BusinessRoadmap.tsx
+│   ├── SuccessStory.tsx
+│   ├── AIChatAssistant.tsx
+│   └── Footer.tsx
+├── pages/
+│   └── HomePage.tsx
+└── main.tsx
+```
+
+---
+
+## ⚙️ Setup & Jalankan
+
+```bash
+# 1. Clone repo
+git clone https://github.com/Nopitrasari29/KaryaNusa.git
+cd KaryaNusa
+
+# 2. Install dependencies
+npm install
+
+# 3. Jalankan dev server
+npm run dev
+```
+
+Buka di browser: `http://localhost:5173`
+
+---
+
+## 🛠️ Commands
+
+| Command | Fungsi |
+|---|---|
+| `npm run dev` | Jalankan development server |
+| `npm run build` | Build untuk production |
+| `npm run preview` | Preview hasil build |
+
+---
+
+## 🔑 Environment Variables
+
+Buat file `.env` di root folder:
+
+```env
+VITE_GROQ_API_KEY=your_groq_api_key_here
+```
+
+> Groq API key bisa didapat gratis di [console.groq.com](https://console.groq.com)
+
+---
+
+## 👥 Tim & Pembagian Kerja
+
+| Nama | Bagian |
+|---|---|
+| *(isi nama)* | Frontend UI/UX |
+| *(isi nama)* | Backend + Database |
+| *(isi nama)* | AI Integration (Groq) |
+
+---
+
+## 📌 Status Fitur
+
+| Fitur | Status |
+|---|---|
+| Navbar + Hero | ✅ Done |
+| HowItWorks + Features | ✅ Done |
+| Skill Discovery (7 pertanyaan) | ✅ Done |
+| Opportunities per Skill | ✅ Done |
+| Business Roadmap Interaktif | ✅ Done |
+| Success Story / Testimoni | ✅ Done |
+| AI Chat Assistant | ⚠️ UI done, AI belum |
+| Skill Comparison Chart | ❌ Belum |
+| Backend + MongoDB | ❌ Belum |
+| Deploy | ❌ Belum |
+
+---
+
+## 🔮 Coming Soon
+
+- Groq API integration (chatbot + scoring)
+- Skill Comparison Chart
+- Backend Node.js + MongoDB
+- Deploy ke Vercel + Railway
