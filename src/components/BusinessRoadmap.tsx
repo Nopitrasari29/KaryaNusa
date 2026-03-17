@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react"
 
-type Props = { skill: string | null }
+type Props = { 
+  skill: string | null
+  onProgressChange?: (progress: number) => void
+}
 
 type RoadmapStep = {
   id: number
@@ -58,36 +61,92 @@ const phaseColors = [
   { color: "#7C3AED", bg: "rgba(124,58,237,0.07)", border: "rgba(124,58,237,0.18)" },
 ]
 
-export default function BusinessRoadmap({ skill }: Props) {
-  const defaultSkill = "Programming"
-  const activeSkill = skill ?? defaultSkill
-  const steps = roadmapData[activeSkill] ?? roadmapData[defaultSkill]
+export default function BusinessRoadmap({ skill, onProgressChange }: Props) {
+
+  const normalizeSkill = (s: string | null) => {
+    if (!s) return "Programming"
+
+    const map: Record<string, string> = {
+      "programming": "Programming",
+      "desain grafis": "Desain Grafis",
+      "design": "Desain Grafis",
+      "fotografi": "Fotografi",
+      "menulis": "Menulis",
+      "marketing": "Marketing",
+      "public speaking": "Public Speaking"
+    }
+
+    return map[s.toLowerCase()] || "Programming"
+  }
+
+  const activeSkill = normalizeSkill(skill)
+  console.log("skill asli:", skill)
+  console.log("skill setelah normalize:", activeSkill)
+  const steps = roadmapData[activeSkill] || roadmapData["Programming"]
 
   const [checked, setChecked] = useState<Record<string, boolean>>({})
   const sectionRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => { setChecked({}) }, [activeSkill])
+  useEffect(() => {
+    setChecked({})
+  }, [activeSkill])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target) } }),
+      (entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add("visible")
+            observer.unobserve(e.target)
+          }
+        })
+      },
       { threshold: 0.08 }
     )
+
     if (sectionRef.current) observer.observe(sectionRef.current)
+
     return () => observer.disconnect()
   }, [])
 
-  const toggle = (key: string) => setChecked(prev => ({ ...prev, [key]: !prev[key] }))
+  const toggle = (key: string) =>
+    setChecked(prev => ({ ...prev, [key]: !prev[key] }))
 
   const totalTasks = steps.reduce((acc, s) => acc + s.tasks.length, 0)
   const doneTasks = Object.values(checked).filter(Boolean).length
-  const progressPct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0
+  const progressPct = totalTasks > 0
+    ? Math.round((doneTasks / totalTasks) * 100)
+    : 0
+
+  useEffect(() => {
+    onProgressChange?.(progressPct)
+  }, [progressPct, onProgressChange])
 
   const completedPhases = steps.filter(s =>
     s.tasks.every((_, ti) => checked[`${s.id}-${ti}`])
   ).length
 
-  if (!skill) return null
+  // 🔥 FIX UTAMA (tidak return null lagi)
+  if (!skill) {
+    return (
+      <section className="roadmap-section py-14 sm:py-16 bg-white text-center">
+        <p className="text-gray-500">
+          Silakan pilih skill terlebih dahulu 👆
+        </p>
+      </section>
+    )
+  }
+
+  // 🔥 FIX TAMBAHAN (jaga-jaga data kosong)
+  if (!steps || steps.length === 0) {
+    return (
+      <section className="roadmap-section py-14 sm:py-16 bg-white text-center">
+        <p className="text-gray-500">
+          Roadmap belum tersedia 😢
+        </p>
+      </section>
+    )
+  }
 
   return (
     <>

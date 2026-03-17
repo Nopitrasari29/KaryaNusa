@@ -1,12 +1,37 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
+  const [active, setActive] = useState("home")
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
     setOpen(false)
   }
+
+  useEffect(() => {
+
+    const sections = ["home", "discover", "assistant"]
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id)
+          }
+        })
+      },
+      { threshold: 0.6 }
+    )
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+
+  }, [])
 
   return (
     <>
@@ -26,20 +51,17 @@ export default function Navbar() {
       <nav className="navbar">
         <div className="max-w-7xl mx-auto px-5 sm:px-6 py-4 flex justify-between items-center">
 
-          {/* Logo */}
           <button onClick={() => scrollTo("home")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center", gap: 4 }}>
             <span style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: 700, fontSize: "1.2rem", color: "#fff", letterSpacing: "-0.01em" }}>KARYANUSA</span>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#1F7A63", display: "inline-block", marginBottom: 8 }} />
           </button>
 
-          {/* Desktop */}
           <div className="hidden md:flex items-center gap-8">
-            <button className="nav-link" onClick={() => scrollTo("discover")}>Discover</button>
-            <button className="nav-link" onClick={() => scrollTo("assistant")}>AI Assistant</button>
+            <button className="nav-link" style={{color: active==="discover"?"#fff":""}} onClick={() => scrollTo("discover")}>Discover</button>
+            <button className="nav-link" style={{color: active==="assistant"?"#fff":""}} onClick={() => scrollTo("assistant")}>AI Assistant</button>
             <button className="nav-btn" onClick={() => scrollTo("discover")}>Get Started</button>
           </div>
 
-          {/* Mobile toggle — ☰ or ✕ */}
           <button
             className="md:hidden"
             onClick={() => setOpen(!open)}
@@ -49,7 +71,6 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile menu */}
         {open && (
           <div className="md:hidden" style={{ background: "#1E3A5F", borderTop: "1px solid rgba(255,255,255,0.1)", padding: "8px 20px 20px" }}>
             <button className="mobile-link" onClick={() => scrollTo("discover")}>Discover</button>

@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { askAI } from "../services/aiService"
 
 type Message = {
   role: "user" | "ai"
@@ -14,7 +15,7 @@ export function useAIChat() {
     }
   ])
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
 
     const userMessage: Message = {
       role: "user",
@@ -23,16 +24,27 @@ export function useAIChat() {
 
     setMessages((prev) => [...prev, userMessage])
 
-    setTimeout(() => {
+    try {
+
+      const reply = await askAI(text)
 
       const aiMessage: Message = {
         role: "ai",
-        text: "Berdasarkan skill kamu, ada beberapa peluang usaha yang bisa dicoba."
+        text: reply
       }
 
       setMessages((prev) => [...prev, aiMessage])
 
-    }, 1000)
+    } catch {
+
+      const aiMessage: Message = {
+        role: "ai",
+        text: "Maaf, AI sedang mengalami gangguan."
+      }
+
+      setMessages((prev) => [...prev, aiMessage])
+
+    }
 
   }
 

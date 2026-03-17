@@ -12,30 +12,61 @@ import SuccessStory from "../components/SuccessStory"
 import AIChatAssistant from "../components/AIChatAssistant"
 import Footer from "../components/Footer"
 import BackToTop from "../components/BackToTop"
+import WaveDivider from "../components/WaveDivider"
+import IncomeCalculator from "../components/IncomeCalculator"
+import BadgeSection from "../components/BadgeSection"
+import OpportunityTrend from "../components/OpportunityTrend"
+import SkillGapAnalyzer from "../components/SkillGapAnalyzer"
+import ShareResult from "../components/ShareResult"
+import AnalyticsDashboard from "../components/AnalyticsDashboard"
+import CommunityBoard from "../components/CommunityBoard"
+import DarkModeToggle from "../components/DarkModeToggle"
+import PWAInstall from "../components/PWAInstall"
+import Onboarding from "../components/Onboarding"
+import RoadmapReminder from "../components/RoadmapReminder"
 
 export default function HomePage() {
-  const [selectedSkill, setSelectedSkill] = useState<string | null>(null)
+
+  const [selectedSkill, setSelectedSkill] = useState<string>("Programming")
   const [confidenceScore, setConfidenceScore] = useState<number>(0)
+  const [roadmapProgress, setRoadmapProgress] = useState(0)
 
   const handleSkillSelect = (skill: string, score: number) => {
-    setSelectedSkill(skill)
-    setConfidenceScore(score)
-  }
+  setSelectedSkill(skill)
+  setConfidenceScore(score)}
 
   return (
-    <div className="bg-[#F6F5F2] text-[#2B2B2B]">
-      <Navbar />
-      <Hero />
-      <HowItWorks />
-      <Features />
-      <SkillComparisonChart />
-      <SkillDiscovery onSelectSkill={handleSkillSelect} />
-      <Opportunities skill={selectedSkill} score={confidenceScore} />
-      <BusinessRoadmap skill={selectedSkill} />
-      <SuccessStory />
-      <AIChatAssistant />
-      <Footer />
-      <BackToTop />
+    <div className="bg-[#F6F5F2] text-[#2B2B2B] dark:bg-[#0F172A] dark:text-white">
+      <Navbar/>
+      <Hero/>
+      <WaveDivider/>
+      <HowItWorks/>
+      <Features/>
+      <SkillComparisonChart/>
+      <OpportunityTrend/>
+      <IncomeCalculator/>
+      <SkillDiscovery onSelectSkill={handleSkillSelect}/>
+      <Opportunities
+        skill={selectedSkill}
+        score={confidenceScore}
+      />
+      <SkillGapAnalyzer skill={selectedSkill}/>
+      <BusinessRoadmap
+        skill={selectedSkill}
+        onProgressChange={setRoadmapProgress}
+      />
+      <RoadmapReminder progress={roadmapProgress}/>
+      <BadgeSection progress={roadmapProgress}/>
+      <ShareResult skill={selectedSkill} score={confidenceScore}/>
+      <AnalyticsDashboard/>
+      <SuccessStory/>
+      <CommunityBoard/>
+      <AIChatAssistant/>
+      <Footer/>
+      <BackToTop/>
+      <DarkModeToggle/>
+      <PWAInstall/>
+      <Onboarding/>
     </div>
   )
 }

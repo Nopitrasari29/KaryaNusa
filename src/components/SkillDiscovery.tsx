@@ -79,6 +79,36 @@ const questions: Question[] = [
       { label: "💰 Dapet klien pertama dari skill yang kamu jual", skills: ["Marketing", "Menulis", "Public Speaking"], points: 2 },
     ],
   },
+  {
+    id: 8,
+    question: "Ketika menghadapi masalah baru dalam sebuah proyek, kamu biasanya...",
+    options: [
+      { label: "🔍 Mencari cara teknis untuk memecahkan masalah tersebut", skills: ["Programming"], points: 3 },
+      { label: "🎨 Membuat konsep visual untuk menjelaskan solusi", skills: ["Desain Grafis"], points: 3 },
+      { label: "📷 Mengamati detail dan menangkap momen atau perspektif unik", skills: ["Fotografi"], points: 3 },
+      { label: "✍️ Menyusun penjelasan atau dokumentasi yang jelas", skills: ["Menulis"], points: 3 },
+    ],
+  },
+  {
+    id: 9,
+    question: "Dalam sebuah tim proyek, peran apa yang paling nyaman kamu ambil?",
+    options: [
+      { label: "🛠️ Orang yang membangun sistem atau teknologinya", skills: ["Programming"], points: 3 },
+      { label: "🎨 Orang yang merancang tampilan atau visual proyek", skills: ["Desain Grafis"], points: 3 },
+      { label: "📢 Orang yang mempromosikan dan mengenalkan produk ke publik", skills: ["Marketing"], points: 3 },
+      { label: "🎤 Orang yang menjelaskan ide proyek kepada banyak orang", skills: ["Public Speaking"], points: 3 },
+    ],
+  },
+  {
+    id: 10,
+    question: "Jika diberi waktu 1 minggu untuk membuat sesuatu dari nol, kamu lebih tertarik membuat...",
+    options: [
+      { label: "💻 Sebuah aplikasi atau website sederhana", skills: ["Programming"], points: 3 },
+      { label: "🎨 Brand visual atau desain produk digital", skills: ["Desain Grafis"], points: 3 },
+      { label: "📸 Seri foto atau video kreatif", skills: ["Fotografi"], points: 3 },
+      { label: "✍️ Artikel, blog, atau konten edukasi", skills: ["Menulis"], points: 3 },
+    ],
+  },  
 ]
 
 const skillColors: Record<string, { bg: string; border: string; color: string; icon: string }> = {

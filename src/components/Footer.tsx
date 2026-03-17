@@ -1,3 +1,4 @@
+import React from "react"
 import { useState } from "react"
 
 export default function Footer() {
@@ -9,11 +10,26 @@ export default function Footer() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
   }
 
-  const handleSubmitFeedback = () => {
+  const handleSubmitFeedback = async () => {
+
     if (!feedback.message.trim()) return
+
+    await fetch("https://formspree.io/f/xpqyrqpo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(feedback)
+    })
+
     setSubmitted(true)
-    setTimeout(() => { setSubmitted(false); setFeedback({ name: "", message: "", rating: 0 }); setShowModal(null) }, 2500)
-  }
+
+    setTimeout(() => {
+      setSubmitted(false)
+      setFeedback({ name: "", message: "", rating: 0 })
+      setShowModal(null)
+    }, 2500)
+  } 
 
   const modalContent: Record<string, { title: string; content: React.ReactNode }> = {
     "Tentang Kami": {
