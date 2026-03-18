@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react"
+import axios from "axios"
 
 type Props = { 
   skill: string | null
+  onPhasesComplete?: (count: number) => void 
   onProgressChange?: (progress: number) => void
 }
 
@@ -61,7 +63,7 @@ const phaseColors = [
   { color: "#7C3AED", bg: "rgba(124,58,237,0.07)", border: "rgba(124,58,237,0.18)" },
 ]
 
-export default function BusinessRoadmap({ skill, onProgressChange }: Props) {
+export default function BusinessRoadmap({ skill, onProgressChange, onPhasesComplete }: Props) {
 
   const normalizeSkill = (s: string | null) => {
     if (!s) return "Programming"
@@ -85,32 +87,103 @@ export default function BusinessRoadmap({ skill, onProgressChange }: Props) {
   const steps = roadmapData[activeSkill] || roadmapData["Programming"]
 
   const [checked, setChecked] = useState<Record<string, boolean>>({})
+  const [loading, setLoading] = useState(false); 
   const sectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setChecked({})
-  }, [activeSkill])
+    const fetchProgress = async () => {
+      const session = localStorage.getItem('karyanusa_session');
+      if (!session) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/progress/${session}`);
+        if (res.data && res.data.completedTasks) {
+          // Ubah array ["1-0", "1-1"] jadi objek { "1-0": true, "1-1": true }
+          const savedChecked: Record<string, boolean> = {};
+          res.data.completedTasks.forEach((key: string) => {
+            savedChecked[key] = true;
+          });
+          setChecked(savedChecked);
+        }
+      } catch (err) {
+        console.error("Gagal mengambil progress:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProgress();
+  }, [activeSkill]); // Reset/Re-fetch jika skill berubah
+
+
+  // 2. FUNGSI SIMPAN KE BACKEND (SAVE)
+  const saveProgressToDb = async (newChecked: Record<string, boolean>) => {
+    const session = localStorage.getItem('karyanusa_session');
+    if (!session) return;
+
+    // Ambil hanya kunci yang bernilai 'true'
+    const completedTasksArray = Object.keys(newChecked).filter(key => newChecked[key]);
+
+    const badges = [];
+    if (completedPhases >= 1) badges.push("Explorer 🧭");
+    if (completedPhases >= 2) badges.push("Starter 🚀");
+    if (completedPhases >= 3) badges.push("Builder 🏗️");
+    if (completedPhases >= 4) {
+       badges.push("Scaler 📈");
+       badges.push("Master 👑"); 
+    }
+
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/progress/update`, {
+        sessionId: session,
+        activeSkill: activeSkill,
+        completedTasks: completedTasksArray,
+        unlockedBadges: badges // Nanti bisa dihitung berdasarkan progress
+      });
+      // Simpan badge ke local agar BadgeSection bisa baca langsung tanpa panggil API lagi
+      localStorage.setItem('karyanusa_badges', JSON.stringify(badges));
+      console.log("Progress saved to Cloud! ✅");
+    } catch (err) {
+      console.error("Gagal simpan progress ke database");
+    }
+  };
+
+  // 3. UPDATE FUNGSI TOGGLE
+  const toggle = (key: string) => {
+    const newChecked = { ...checked, [key]: !checked[key] };
+    setChecked(newChecked); // Update tampilan langsung (cepet)
+    saveProgressToDb(newChecked); // Simpan ke database (di background)
+  }
 
   useEffect(() => {
+    // Jika masih loading, jangan jalankan detektor dulu
+    if (loading) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(e => {
           if (e.isIntersecting) {
-            e.target.classList.add("visible")
-            observer.unobserve(e.target)
+            e.target.classList.add("visible");
+            observer.unobserve(e.target);
           }
-        })
+        });
       },
-      { threshold: 0.08 }
-    )
+      { threshold: 0.01, rootMargin: "0px 0px -50px 0px" } 
+    );
 
-    if (sectionRef.current) observer.observe(sectionRef.current)
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+      setTimeout(() => {
+        sectionRef.current?.classList.add("visible");
+      }, 2000);
+    }
 
-    return () => observer.disconnect()
-  }, [])
-
-  const toggle = (key: string) =>
-    setChecked(prev => ({ ...prev, [key]: !prev[key] }))
+    return () => observer.disconnect();
+    // Jalan ulang jika loading selesai atau skill berubah
+  }, [loading, activeSkill]); 
 
   const totalTasks = steps.reduce((acc, s) => acc + s.tasks.length, 0)
   const doneTasks = Object.values(checked).filter(Boolean).length
@@ -125,6 +198,22 @@ export default function BusinessRoadmap({ skill, onProgressChange }: Props) {
   const completedPhases = steps.filter(s =>
     s.tasks.every((_, ti) => checked[`${s.id}-${ti}`])
   ).length
+
+  useEffect(() => {
+    // Memberitahu HomePage berapa fase yang sudah centang semua
+    onPhasesComplete?.(completedPhases);
+  }, [completedPhases, onPhasesComplete]);
+
+  if (loading) {
+    return (
+      <section className="roadmap-section py-14 sm:py-16 bg-white text-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#1F7A63]"></div>
+          <p className="text-gray-500 font-medium">Sinkronisasi progres Anda dengan Cloud...</p>
+        </div>
+      </section>
+    )
+  }
 
   // 🔥 FIX UTAMA (tidak return null lagi)
   if (!skill) {
@@ -155,7 +244,7 @@ export default function BusinessRoadmap({ skill, onProgressChange }: Props) {
         .roadmap-section { font-family: 'Plus Jakarta Sans', sans-serif; }
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .roadmap-wrap { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .roadmap-wrap { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
         .roadmap-wrap.visible { opacity: 1; transform: translateY(0); }
 
         .task-item {

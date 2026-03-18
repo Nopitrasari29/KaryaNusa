@@ -1,4 +1,5 @@
 import { useState } from "react"
+import axios from "axios"
 
 type Props = { onSelectSkill: (skill: string, score: number) => void }
 
@@ -139,12 +140,17 @@ export default function SkillDiscovery({ onSelectSkill }: Props) {
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState<number[]>([])
   const [selected, setSelected] = useState<number | null>(null)
-  const [result, setResult] = useState<{ skill: string; score: number; allScores: Record<string, number> } | null>(null)
+  const [result, setResult] = useState<{ 
+    skill: string; 
+    score: number; 
+    allScores: Record<string, number>; 
+    reasoning?: string; 
+  } | null>(null)
   const [animating, setAnimating] = useState(false)
 
   const handleSelect = (optIdx: number) => { setSelected(optIdx) }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (selected === null) return
     const newAnswers = [...answers, selected]
 
@@ -157,10 +163,41 @@ export default function SkillDiscovery({ onSelectSkill }: Props) {
         setAnimating(false)
       }, 250)
     } else {
-      const res = detectSkill(newAnswers)
-      setAnswers(newAnswers)
-      setResult(res)
-      onSelectSkill(res.skill, res.score)
+      setAnimating(true);
+      setAnswers(newAnswers);
+
+      try {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/skill/analyze`, {
+          sessionId: localStorage.getItem('karyanusa_session') || 'sess-' + Date.now(),
+          answers: newAnswers,
+          questionnaireData: newAnswers.map((ans, idx) => ({ 
+            q: questions[idx].question, 
+            a: questions[idx].options[ans].label 
+          }))
+        });
+
+        // Simpan SessionID dan Skill ke memory browser
+        localStorage.setItem('karyanusa_session', response.data.sessionId);
+        localStorage.setItem('user_identified_skill', response.data.skillResult);
+
+        // Ambil hitungan bar grafik secara lokal agar tidak hilang
+        const localStats = detectSkill(newAnswers); 
+
+        setResult({
+          skill: response.data.skillResult,
+          score: response.data.confidenceScore,
+          reasoning: response.data.reasoning, // Penjelasan dari AI muncul di sini!
+          allScores: localStats.allScores
+        });
+        
+        onSelectSkill(response.data.skillResult, response.data.confidenceScore);
+      } catch (error) {
+        console.error("Koneksi AI Gagal, pakai backup lokal", error);
+        const res = detectSkill(newAnswers);
+        setResult(res);
+      } finally {
+        setAnimating(false);
+      }
     }
   }
 

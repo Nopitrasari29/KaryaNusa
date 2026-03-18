@@ -30,6 +30,7 @@ export default function HomePage() {
   const [selectedSkill, setSelectedSkill] = useState<string>("Programming")
   const [confidenceScore, setConfidenceScore] = useState<number>(0)
   const [roadmapProgress, setRoadmapProgress] = useState(0)
+  const [finishedPhases, setFinishedPhases] = useState<number>(0); 
 
   const handleSkillSelect = (skill: string, score: number) => {
   setSelectedSkill(skill)
@@ -45,7 +46,7 @@ export default function HomePage() {
       <SkillComparisonChart/>
       <OpportunityTrend/>
       <IncomeCalculator/>
-      <SkillDiscovery onSelectSkill={handleSkillSelect}/>
+      <SkillDiscovery onSelectSkill={handleSkillSelect} />
       <Opportunities
         skill={selectedSkill}
         score={confidenceScore}
@@ -53,10 +54,11 @@ export default function HomePage() {
       <SkillGapAnalyzer skill={selectedSkill}/>
       <BusinessRoadmap
         skill={selectedSkill}
-        onProgressChange={setRoadmapProgress}
+        onPhasesComplete={(count: number) => setFinishedPhases(count)} 
+        onProgressChange={(pct: number) => setRoadmapProgress(pct)} 
       />
       <RoadmapReminder progress={roadmapProgress}/>
-      <BadgeSection progress={roadmapProgress}/>
+      <BadgeSection phasesCompleted={finishedPhases} />
       <ShareResult skill={selectedSkill} score={confidenceScore}/>
       <AnalyticsDashboard/>
       <SuccessStory/>

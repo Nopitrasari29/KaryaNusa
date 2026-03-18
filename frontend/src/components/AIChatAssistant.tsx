@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react"
+import axios from "axios"
 
 type Message = { role: "user" | "ai"; text: string; typing?: boolean }
 
@@ -7,13 +8,6 @@ const suggestedQuestions = [
   "Cara mulai freelance dari nol?",
   "Bagaimana memasarkan produk digital?",
 ]
-
-const dummyReplies = [
-  "Berdasarkan pertanyaan kamu, ada beberapa langkah yang bisa dimulai sekarang:\n\n1. Identifikasi skill utama yang kamu kuasai\n2. Riset pasar dan kompetitor di bidang tersebut\n3. Buat portofolio sederhana sebagai bukti kemampuan\n4. Mulai tawarkan jasa ke lingkaran terdekat dulu\n\nSkill apa yang paling ingin kamu kembangkan lebih lanjut?",
-  "Untuk memulai freelance dari nol, kunci utamanya adalah konsistensi dan membangun kepercayaan klien.\n\nCoba mulai dengan:\n• Bergabung di komunitas freelancer online\n• Ambil 1–2 proyek kecil untuk membangun reputasi\n• Minta testimoni dari klien pertama\n\nApakah kamu sudah punya gambaran target pasar yang ingin dituju?",
-  "Strategi pemasaran digital yang efektif untuk pemula biasanya dimulai dari platform yang sudah kamu gunakan sehari-hari.\n\nBeberapa cara yang terbukti:\n✅ Optimasi profil LinkedIn dan Instagram\n✅ Bagikan konten edukatif sesuai bidang skill\n✅ Manfaatkan word-of-mouth dari orang terdekat\n\nMau saya bantu susun strategi yang lebih spesifik?",
-]
-let replyIdx = 0
 
 function TypingMessage({ text, onDone }: { text: string; onDone: () => void }) {
   const [displayed, setDisplayed] = useState("")
@@ -57,12 +51,29 @@ export default function AIChatAssistant() {
     setMessages(newMsgs)
     setInput("")
     setLoading(true)
-    await new Promise(r => setTimeout(r, 900))
-    const reply = dummyReplies[replyIdx++ % dummyReplies.length]
-    const aiIdx = newMsgs.length
-    setMessages([...newMsgs, { role: "ai", text: reply, typing: true }])
-    setTypingIdx(aiIdx)
-    setLoading(false)
+
+    try {
+      const session = localStorage.getItem('karyanusa_session') || 'anon';
+      const skill = localStorage.getItem('user_identified_skill') || 'Umum';
+
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/chat/send`, {
+        sessionId: session,
+        message: userText,
+        skillContext: skill
+      });
+
+      // Hilangkan dummyReplies, gunakan text dari Backend (Groq AI)
+      setMessages([...newMsgs, { 
+        role: "ai", 
+        text: response.data.text, 
+        typing: true 
+      }]);
+      setTypingIdx(newMsgs.length);
+    } catch (error) {
+      setMessages([...newMsgs, { role: "ai", text: "Maaf, AI sedang istirahat. Coba lagi ya!" }]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleDoneTyping = (idx: number) => {

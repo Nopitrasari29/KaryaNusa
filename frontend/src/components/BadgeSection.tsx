@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 type Props = {
-  progress: number
+  phasesCompleted: number 
 }
 
 type Badge = {
@@ -19,23 +19,23 @@ const badges: Badge[] = [
   { phase: 5, name: "Master", icon: "👑", description: "Menyelesaikan semua fase roadmap" }
 ]
 
-export default function BadgeSection({ progress }: Props) {
+export default function BadgeSection({ phasesCompleted }: Props) {
 
   const [newUnlocked, setNewUnlocked] = useState<number | null>(null)
 
   useEffect(() => {
 
-    if (progress > 0) {
+    if (phasesCompleted > 0) {
 
-      setNewUnlocked(progress)
+      setNewUnlocked(phasesCompleted)
 
       setTimeout(() => {
         setNewUnlocked(null)
-      }, 700)
+      }, 1000)
 
     }
 
-  }, [progress])
+  }, [phasesCompleted])
 
   const shareBadge = (badge: Badge) => {
 
@@ -159,13 +159,7 @@ Platform AI untuk menemukan peluang ekonomi dari skill digital.
 
             {badges.map(b => {
 
-              let unlocked = false
-
-              if (b.phase === 5) {
-                unlocked = progress === 4
-              } else {
-                unlocked = progress >= b.phase
-              }
+              const isUnlocked = b.phase === 5 ? phasesCompleted === 4 : phasesCompleted >= b.phase;
 
               return(
 
@@ -173,7 +167,7 @@ Platform AI untuk menemukan peluang ekonomi dari skill digital.
                   key={b.phase}
                   className={`
                     badge-card
-                    ${!unlocked ? "badge-locked" : ""}
+                    ${!isUnlocked ? "badge-locked" : ""}
                     ${newUnlocked === b.phase ? "badge-pop" : ""}
                   `}
                 >
@@ -190,7 +184,7 @@ Platform AI untuk menemukan peluang ekonomi dari skill digital.
                     {b.description}
                   </div>
 
-                  {unlocked && (
+                  {isUnlocked && (
                     <button
                       className="badge-share"
                       onClick={()=>shareBadge(b)}

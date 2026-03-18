@@ -1,5 +1,6 @@
 import React from "react"
 import { useState } from "react"
+import axios from "axios"
 
 export default function Footer() {
   const [showModal, setShowModal] = useState<string | null>(null)
@@ -14,22 +15,51 @@ export default function Footer() {
 
     if (!feedback.message.trim()) return
 
-    await fetch("https://formspree.io/f/xpqyrqpo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(feedback)
-    })
+    try {
+      // 1. Ambil data pendukung dari localStorage
+      const userSkill = localStorage.getItem('user_identified_skill') || "Umum";
 
-    setSubmitted(true)
+      // 2. KIRIM KE MONGO DB (Lewat Backend Kita)
+      // Kita bungkus dengan try-catch agar jika satu gagal, yang lain tetap jalan
+      try {
+        await axios.post(`${import.meta.env.VITE_API_URL}/feedback`, {
+          name: feedback.name || "Anonim",
+          message: feedback.message,
+          rating: feedback.rating,
+          skill: userSkill
+        });
+        console.log("Feedback tersimpan di MongoDB ✅");
+      } catch (err) {
+        console.error("Gagal simpan ke MongoDB:", err);
+      }
 
-    setTimeout(() => {
-      setSubmitted(false)
-      setFeedback({ name: "", message: "", rating: 0 })
-      setShowModal(null)
-    }, 2500)
-  } 
+      // 3. KIRIM KE FORMSPREE (Punya Temanmu)
+      await fetch("https://formspree.io/f/xpqyrqpo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ...feedback,
+          identified_skill: userSkill // Tambahkan info skill juga ke Formspree biar keren
+        })
+      });
+      console.log("Feedback terkirim ke Formspree ✅");
+
+      // 4. Set UI Sukses
+      setSubmitted(true);
+
+      setTimeout(() => {
+        setSubmitted(false);
+        setFeedback({ name: "", message: "", rating: 0 });
+        setShowModal(null);
+      }, 2500);
+
+    } catch (error) {
+      console.error("Kritikal Error:", error);
+      alert("Terjadi kesalahan saat mengirim pesan.");
+    }
+  };
 
   const modalContent: Record<string, { title: string; content: React.ReactNode }> = {
     "Tentang Kami": {

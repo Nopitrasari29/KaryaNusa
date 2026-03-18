@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+
+# Build files (jika nanti pakai TypeScript build atau dist)
+dist/
+build/
+
+# Private environment variables (SANGAT PENTING!)
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor files
+.vscode/
+.idea/
+.DS_Store
+
+# Misc
+temp/
+queries.json
