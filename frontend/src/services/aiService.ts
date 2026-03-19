@@ -2,7 +2,7 @@
 // Chat AI (Dummy dulu)
 // =======================================
 
-export async function askAI(question: string) {
+export async function askAI(_question: string) {
 
   return new Promise<string>((resolve) => {
 

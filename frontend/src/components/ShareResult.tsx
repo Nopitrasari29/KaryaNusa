@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import {  } from "react"
 
 type Props = {
   skill: string | null
