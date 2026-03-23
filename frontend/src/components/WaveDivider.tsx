@@ -1,21 +1,12 @@
-export default function WaveDivider() {
+interface WaveProps { color: string; rotate?: boolean }
 
+export default function WaveDivider({ color, rotate = false }: WaveProps) {
   return (
-    <div style={{ lineHeight: 0 }}>
-      <svg
-        viewBox="0 0 1440 120"
-        style={{
-          width: "100%",
-          height: "80px",
-          display: "block"
-        }}
-        preserveAspectRatio="none"
-      >
-        <path
-          d="M0,40 C240,120 480,0 720,40 C960,80 1200,0 1440,60 L1440,120 L0,120 Z"
-          fill="#ffffff"
-        />
+    <div className={`relative w-full leading-[0] pointer-events-none z-10 ${rotate ? 'rotate-180 -mb-1' : '-mt-[58px] md:-mt-[98px]'}`}>
+      <svg viewBox="0 0 1440 120" className={`relative block w-full h-[60px] md:h-[100px] ${color}`} preserveAspectRatio="none">
+        <path fill="currentColor" d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,64C960,75,1056,85,1152,80C1248,75,1344,53,1392,42.7L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z" />
       </svg>
+      <div className={`h-[4px] w-full -mt-1 ${color.replace('fill-', 'bg-')}`} />
     </div>
   )
 }

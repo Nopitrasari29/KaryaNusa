@@ -1,44 +1,12 @@
 import { useEffect, useRef } from "react"
+import { opportunityMap } from "../services/karyanusaData"
 
 type Props = { skill: string | null; score?: number }
 
-const opportunityMap: Record<string, { title: string; desc: string; income: string; incomeType: "high" | "passive" | "potential"; icon: string; steps: string[] }[]> = {
-  "Programming": [
-    { title: "Freelance Web Developer", desc: "Bangun website untuk bisnis lokal, startup, atau klien internasional via platform freelance.", income: "Rp 3–15 jt/proyek", incomeType: "high", icon: "💻", steps: ["Buat portofolio GitHub", "Daftar Upwork/Fiverr", "Ambil proyek pertama"] },
-    { title: "Website Template Marketplace", desc: "Jual template website di ThemeForest atau Gumroad dan hasilkan pendapatan pasif.", income: "Rp 1–5 jt/bulan", incomeType: "passive", icon: "🛒", steps: ["Buat 3 template premium", "Upload ke ThemeForest", "Promosi di sosmed"] },
-    { title: "Startup Technical Co-Founder", desc: "Bergabung dengan startup sebagai co-founder teknis dan dapatkan equity bernilai tinggi.", income: "Equity + Salary", incomeType: "potential", icon: "🚀", steps: ["Ikuti komunitas startup", "Cari co-founder bisnis", "Bangun MVP bersama"] },
-  ],
-  "Desain Grafis": [
-    { title: "Freelance Brand Designer", desc: "Buat logo, identitas merek, dan materi pemasaran untuk bisnis lokal maupun internasional.", income: "Rp 2–10 jt/proyek", incomeType: "high", icon: "🎨", steps: ["Buat portofolio Behance", "Daftar 99designs", "Tawarkan ke UMKM lokal"] },
-    { title: "Jual Aset Digital", desc: "Jual template desain, preset, dan ilustrasi di marketplace seperti Creative Market.", income: "Rp 500rb–3 jt/bulan", incomeType: "passive", icon: "🖼️", steps: ["Buat 10 aset berkualitas", "Upload ke Creative Market", "Promosi di Pinterest"] },
-    { title: "Social Media Designer", desc: "Kelola konten visual untuk brand dan bisnis di Instagram, TikTok, dan LinkedIn.", income: "Rp 1–4 jt/klien/bln", incomeType: "potential", icon: "📱", steps: ["Buat paket desain", "Tawarkan ke UKM", "Gunakan Canva Pro"] },
-  ],
-  "Fotografi": [
-    { title: "Fotografer Produk & Event", desc: "Layani foto produk UMKM, pernikahan, dan event korporat di kotamu.", income: "Rp 1–8 jt/sesi", incomeType: "high", icon: "📷", steps: ["Bangun portofolio", "Bergabung komunitas wedding", "Promosi via Instagram"] },
-    { title: "Jual Foto di Stock Platform", desc: "Upload foto berkualitas tinggi ke Shutterstock, Getty, dan Adobe Stock.", income: "Rp 300rb–2 jt/bulan", incomeType: "passive", icon: "🖼️", steps: ["Pilih niche foto", "Daftar Shutterstock", "Upload 50+ foto konsisten"] },
-    { title: "Kursus Fotografi Online", desc: "Bagikan ilmu fotografi lewat kelas online di Udemy atau platform lokal.", income: "Rp 2–10 jt/bulan", incomeType: "potential", icon: "🎓", steps: ["Rekam 10 video tutorial", "Upload ke Udemy", "Promosi di komunitas foto"] },
-  ],
-  "Menulis": [
-    { title: "Content Writer & Copywriter", desc: "Tulis artikel SEO, copywriting iklan, dan konten blog untuk bisnis online.", income: "Rp 50–300rb/artikel", incomeType: "high", icon: "✍️", steps: ["Buat portofolio tulisan", "Daftar Projects.co.id", "Tawarkan ke startup"] },
-    { title: "Self-Publishing E-Book", desc: "Tulis dan jual e-book di Amazon Kindle, Gumroad, atau platform lokal.", income: "Rp 500rb–5 jt/bulan", incomeType: "passive", icon: "📚", steps: ["Pilih topik niche", "Tulis 50–80 halaman", "Publish di Amazon KDP"] },
-    { title: "Ghost Writer", desc: "Tulis konten, buku, atau artikel untuk klien yang membutuhkan penulis profesional.", income: "Rp 2–20 jt/proyek", incomeType: "potential", icon: "👻", steps: ["Buat profil LinkedIn", "Tawarkan di Fiverr", "Cari klien via networking"] },
-  ],
-  "Marketing": [
-    { title: "Digital Marketing Freelance", desc: "Kelola iklan Google, Meta Ads, dan strategi digital marketing untuk bisnis.", income: "Rp 2–10 jt/klien/bln", incomeType: "high", icon: "📣", steps: ["Pelajari Meta Ads", "Ambil sertifikasi Google", "Cari klien UMKM"] },
-    { title: "Affiliate Marketing", desc: "Promosikan produk orang lain dan dapatkan komisi dari setiap penjualan.", income: "Rp 500rb–5 jt/bulan", incomeType: "passive", icon: "🤝", steps: ["Daftar program affiliate", "Buat konten review", "Optimalkan SEO"] },
-    { title: "Social Media Manager", desc: "Kelola akun sosial media brand dan bantu mereka tumbuh secara organik.", income: "Rp 1–5 jt/klien/bln", incomeType: "potential", icon: "📊", steps: ["Buat paket layanan", "Tawarkan ke brand lokal", "Gunakan tools analytics"] },
-  ],
-  "Public Speaking": [
-    { title: "Trainer & Motivator", desc: "Isi seminar, workshop, dan pelatihan korporat sebagai pembicara profesional.", income: "Rp 2–15 jt/sesi", incomeType: "high", icon: "🎤", steps: ["Pilih niche topik", "Mulai dari komunitas kecil", "Bangun personal branding"] },
-    { title: "Kursus Online", desc: "Rekam kelas online dan jual ke ribuan pelajar di seluruh Indonesia.", income: "Rp 1–8 jt/bulan", incomeType: "passive", icon: "🎓", steps: ["Rekam materi kelas", "Upload ke Udemy/Skillshare", "Promosi di LinkedIn"] },
-    { title: "MC & Moderator Profesional", desc: "Pimpin acara pernikahan, seminar, dan event korporat sebagai MC profesional.", income: "Rp 1–10 jt/acara", incomeType: "potential", icon: "🎙️", steps: ["Bergabung komunitas MC", "Mulai dari acara kecil", "Buat reel portfolio"] },
-  ],
-}
-
-const incomeConfig = {
-  high:      { label: "High Income",    bg: "rgba(31,122,99,0.08)",  border: "rgba(31,122,99,0.18)",  color: "#1F7A63" },
-  passive:   { label: "Passive Income", bg: "rgba(201,168,76,0.08)", border: "rgba(201,168,76,0.22)", color: "#B8942A" },
-  potential: { label: "High Potential", bg: "rgba(30,58,95,0.07)",   border: "rgba(30,58,95,0.16)",   color: "#1E3A5F" },
+const incomeConfig: Record<string, { label: string; bg: string; border: string; color: string }> = {
+  "High Income":    { label: "High Income",    bg: "rgba(31,122,99,0.08)",  border: "rgba(31,122,99,0.18)",  color: "#1F7A63" },
+  "Passive Income": { label: "Passive Income", bg: "rgba(201,168,76,0.08)", border: "rgba(201,168,76,0.22)", color: "#B8942A" },
+  "High Potential": { label: "High Potential", bg: "rgba(30,58,95,0.07)",   border: "rgba(30,58,95,0.16)",   color: "#1E3A5F" },
 }
 
 export default function Opportunities({ skill, score }: Props) {
@@ -103,7 +71,7 @@ export default function Opportunities({ skill, score }: Props) {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {list.map((item, i) => {
-              const cfg = incomeConfig[item.incomeType]
+              const cfg = incomeConfig[item.type] ?? incomeConfig['High Income']
               return (
                 <div
                   key={i}

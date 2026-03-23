@@ -1,26 +1,24 @@
-import React from "react"
-import { useState } from "react"
-import axios from "axios"
+import React, { useState } from "react";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Instagram, Twitter, Linkedin, Github, 
+  Mail, X, Star, 
+  Info, ShieldCheck, MessageSquare, CheckCircle2, Sparkles 
+} from "lucide-react";
 
-export default function Footer() {
-  const [showModal, setShowModal] = useState<string | null>(null)
-  const [feedback, setFeedback] = useState({ name: "", message: "", rating: 0 })
-  const [submitted, setSubmitted] = useState(false)
+type Props = { onGetStarted: () => void };
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })
-  }
+export default function Footer({ onGetStarted }: Props) {
+  const [showModal, setShowModal] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState({ name: "", message: "", rating: 0 });
+  const [submitted, setSubmitted] = useState(false);
+  const currentYear = new Date().getFullYear();
 
   const handleSubmitFeedback = async () => {
-
-    if (!feedback.message.trim()) return
-
+    if (!feedback.message.trim()) return;
     try {
-      // 1. Ambil data pendukung dari localStorage
       const userSkill = localStorage.getItem('user_identified_skill') || "Umum";
-
-      // 2. KIRIM KE MONGO DB (Lewat Backend Kita)
-      // Kita bungkus dengan try-catch agar jika satu gagal, yang lain tetap jalan
       try {
         await axios.post(`${import.meta.env.VITE_API_URL}/feedback`, {
           name: feedback.name || "Anonim",
@@ -28,59 +26,37 @@ export default function Footer() {
           rating: feedback.rating,
           skill: userSkill
         });
-        console.log("Feedback tersimpan di MongoDB ✅");
-      } catch (err) {
-        console.error("Gagal simpan ke MongoDB:", err);
-      }
+      } catch (err) { console.error("DB Error:", err); }
 
-      // 3. KIRIM KE FORMSPREE (Punya Temanmu)
       await fetch("https://formspree.io/f/xpqyrqpo", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ...feedback,
-          identified_skill: userSkill // Tambahkan info skill juga ke Formspree biar keren
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...feedback, identified_skill: userSkill })
       });
-      console.log("Feedback terkirim ke Formspree ✅");
 
-      // 4. Set UI Sukses
       setSubmitted(true);
-
       setTimeout(() => {
         setSubmitted(false);
         setFeedback({ name: "", message: "", rating: 0 });
         setShowModal(null);
       }, 2500);
-
     } catch (error) {
-      console.error("Kritikal Error:", error);
-      alert("Terjadi kesalahan saat mengirim pesan.");
+      alert("Terjadi kesalahan.");
     }
   };
 
-  const modalContent: Record<string, { title: string; content: React.ReactNode }> = {
+  const modalContent: Record<string, { title: string; icon: any; content: React.ReactNode }> = {
     "Tentang Kami": {
       title: "Tentang KARYANUSA",
+      icon: Info,
       content: (
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <p style={{ fontSize: "0.9rem", color: "#64748B", lineHeight: 1.75 }}>
-            <strong style={{ color: "#1E3A5F" }}>KARYANUSA</strong> adalah platform berbasis AI yang lahir dari kepedulian terhadap potensi masyarakat Indonesia yang belum termanfaatkan secara optimal.
-          </p>
-          <p style={{ fontSize: "0.9rem", color: "#64748B", lineHeight: 1.75 }}>
-            Kami percaya bahwa setiap orang memiliki keterampilan yang bisa menjadi sumber penghasilan — mulai dari mendesain, menulis, hingga berbicara di depan umum. KARYANUSA hadir untuk menjembatani skill tersebut dengan peluang ekonomi nyata.
-          </p>
-          <div style={{ background: "rgba(31,122,99,0.07)", borderRadius: 12, padding: "14px 16px", border: "1px solid rgba(31,122,99,0.15)" }}>
-            <div style={{ fontWeight: 700, color: "#1F7A63", fontSize: "0.88rem", marginBottom: 8 }}>🎯 Misi Kami</div>
-            <p style={{ fontSize: "0.85rem", color: "#64748B", lineHeight: 1.7 }}>Memberdayakan 1 juta masyarakat Indonesia untuk menemukan dan memonetisasi skill mereka melalui teknologi AI yang accessible dan gratis.</p>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginTop: 4 }}>
-            {[{ num: "10K+", label: "Pengguna" }, { num: "50+", label: "Peluang Usaha" }, { num: "2026", label: "Didirikan" }].map(s => (
-              <div key={s.label} style={{ textAlign: "center", background: "#F8FAFB", borderRadius: 10, padding: "10px 8px" }}>
-                <div style={{ fontWeight: 700, color: "#1E3A5F", fontSize: "1.1rem" }}>{s.num}</div>
-                <div style={{ fontSize: "11px", color: "#94A3B8" }}>{s.label}</div>
+        <div className="space-y-4 text-slate-600 text-sm leading-relaxed">
+          <p><strong className="text-[#1F7A63]">KARYANUSA</strong> adalah pionir platform berbasis AI untuk mendemokrasi akses ekonomi bagi seluruh masyarakat Indonesia.</p>
+          <div className="grid grid-cols-3 gap-2">
+            {[{ n: "10K+", l: "User" }, { n: "50+", l: "Peluang" }, { n: "2026", l: "Est." }].map(s => (
+              <div key={s.l} className="text-center p-2 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="font-bold text-[#1E3A5F]">{s.n}</div>
+                <div className="text-[8px] uppercase text-slate-400 font-bold">{s.l}</div>
               </div>
             ))}
           </div>
@@ -89,233 +65,145 @@ export default function Footer() {
     },
     "Kebijakan Privasi": {
       title: "Kebijakan Privasi",
+      icon: ShieldCheck,
       content: (
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div className="space-y-3">
           {[
-            { icon: "🔒", title: "Data yang Kami Kumpulkan", desc: "KARYANUSA hanya mengumpulkan jawaban kuesioner skill kamu untuk keperluan analisis AI. Kami tidak meminta data pribadi seperti KTP, nomor HP, atau informasi sensitif lainnya." },
-            { icon: "🛡️", title: "Penggunaan Data", desc: "Data jawaban kamu digunakan semata-mata untuk mengidentifikasi skill dominan dan memberikan rekomendasi peluang usaha yang relevan. Data tidak dijual ke pihak ketiga manapun." },
-            { icon: "🍪", title: "Cookie", desc: "Kami menggunakan cookie minimal untuk menjaga performa platform. Tidak ada tracking iklan atau profiling komersial." },
-            { icon: "📧", title: "Kontak Privasi", desc: "Jika ada pertanyaan terkait privasi data kamu, hubungi kami melalui form feedback atau email tim kami." },
-          ].map(item => (
-            <div key={item.title} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-              <span style={{ fontSize: 20, flexShrink: 0, marginTop: 2 }}>{item.icon}</span>
+            { t: "Keamanan Data", d: "Enkripsi tingkat tinggi untuk data input Anda." },
+            { t: "Transparansi AI", d: "Data digunakan murni untuk algoritma rekomendasi." }
+          ].map(i => (
+            <div key={i.t} className="flex gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#1F7A63] shrink-0 mt-0.5" />
               <div>
-                <div style={{ fontWeight: 700, color: "#1E3A5F", fontSize: "0.88rem", marginBottom: 4 }}>{item.title}</div>
-                <p style={{ fontSize: "0.83rem", color: "#64748B", lineHeight: 1.7 }}>{item.desc}</p>
+                <h5 className="font-bold text-xs text-[#1E3A5F]">{i.t}</h5>
+                <p className="text-[11px] text-slate-500">{i.d}</p>
               </div>
             </div>
           ))}
-          <p style={{ fontSize: "11px", color: "#94A3B8", marginTop: 4 }}>Terakhir diperbarui: Maret 2026</p>
-        </div>
-      )
-    },
-    "Kontak": {
-      title: "Hubungi Kami",
-      content: (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {[
-            { icon: "📧", label: "Email", val: "hello@karyanusa.id" },
-            { icon: "📱", label: "Instagram", val: "@karyanusa.id" },
-            { icon: "💼", label: "LinkedIn", val: "KARYANUSA Official" },
-            { icon: "📍", label: "Lokasi", val: "Indonesia 🇮🇩" },
-          ].map(c => (
-            <div key={c.label} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 14px", background: "#F8FAFB", borderRadius: 10, border: "1px solid #EEF0F4" }}>
-              <span style={{ fontSize: 18, flexShrink: 0 }}>{c.icon}</span>
-              <div>
-                <div style={{ fontSize: "10px", color: "#94A3B8", fontWeight: 600 }}>{c.label}</div>
-                <div style={{ fontSize: "0.88rem", color: "#1E3A5F", fontWeight: 500 }}>{c.val}</div>
-              </div>
-            </div>
-          ))}
-          <div style={{ marginTop: 4, padding: "12px 14px", background: "rgba(31,122,99,0.07)", borderRadius: 10, border: "1px solid rgba(31,122,99,0.15)" }}>
-            <p style={{ fontSize: "0.83rem", color: "#64748B", lineHeight: 1.7 }}>
-              Untuk feedback, laporan bug, atau kolaborasi — gunakan tombol <strong style={{ color: "#1F7A63" }}>Kirim Feedback</strong> di bawah halaman ini ya! 😊
-            </p>
-          </div>
         </div>
       )
     }
-  }
+  };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
-        .footer-section { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .footer-link { background: none; border: none; cursor: pointer; font-size: 0.88rem; color: rgba(255,255,255,0.5); font-family: 'Plus Jakarta Sans', sans-serif; transition: color 0.2s; padding: 0; text-align: left; }
-        .footer-link:hover { color: #D4AF37; }
-        .info-link { background: none; border: none; cursor: pointer; font-size: 0.88rem; color: rgba(255,255,255,0.5); font-family: 'Plus Jakarta Sans', sans-serif; transition: color 0.2s; padding: 0; text-align: left; text-decoration: underline; text-decoration-color: transparent; }
-        .info-link:hover { color: #D4AF37; text-decoration-color: #D4AF37; }
-        .footer-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
-        @media (min-width: 640px) { .footer-grid { grid-template-columns: repeat(3, 1fr); } }
-
-        /* Modal */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15,35,55,0.7); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeOverlay 0.2s ease; }
-        @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
-        .modal-box { background: #fff; border-radius: 20px; padding: 28px 24px; max-width: 480px; width: 100%; max-height: 85vh; overflow-y: auto; animation: slideUp 0.25s ease; box-shadow: 0 20px 60px rgba(15,35,55,0.25); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-
-        .close-btn { background: #F1F5F9; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: background 0.18s; flex-shrink: 0; }
-        .close-btn:hover { background: #E2E8F0; }
-
-        .star-btn { background: none; border: none; cursor: pointer; font-size: 24px; padding: 2px; transition: transform 0.15s; line-height: 1; }
-        .star-btn:hover { transform: scale(1.2); }
-
-        .feedback-input { width: 100%; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 10px 13px; font-size: 0.88rem; font-family: 'Plus Jakarta Sans', sans-serif; color: #1E3A5F; outline: none; transition: border-color 0.18s; box-sizing: border-box; }
-        .feedback-input:focus { border-color: #1F7A63; box-shadow: 0 0 0 3px rgba(31,122,99,0.09); }
-        .feedback-textarea { width: 100%; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 10px 13px; font-size: 0.88rem; font-family: 'Plus Jakarta Sans', sans-serif; color: #1E3A5F; outline: none; transition: border-color 0.18s; resize: vertical; min-height: 90px; box-sizing: border-box; }
-        .feedback-textarea:focus { border-color: #1F7A63; box-shadow: 0 0 0 3px rgba(31,122,99,0.09); }
-
-        .submit-btn { background: linear-gradient(135deg, #1F7A63, #25957A); color: #fff; border: none; border-radius: 11px; padding: 12px 24px; font-weight: 600; font-size: 0.9rem; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; width: 100%; transition: all 0.2s; }
-        .submit-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(31,122,99,0.32); }
-        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        @keyframes successPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .success-state { animation: successPop 0.3s ease both; text-align: center; padding: 20px 0; }
-      `}</style>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowModal(null) }}>
-          <div className="modal-box">
-
-            {/* Modal header */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-              <h3 style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: 700, fontSize: "1.15rem", color: "#1E3A5F" }}>
-                {showModal === "feedback" ? "💬 Kirim Feedback" : modalContent[showModal]?.title}
-              </h3>
-              <button className="close-btn" onClick={() => { setShowModal(null); setSubmitted(false) }}>✕</button>
+    <footer className="bg-[#1E3A5F] text-white font-sans overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-10 border-b border-white/5 pb-10">
+          
+          {/* BRAND */}
+          <div className="md:col-span-2">
+            <span className="text-2xl font-serif font-black tracking-tighter block mb-4">
+              KARYANUSA<span className="text-[#F0D060]">.</span>
+            </span>
+            <p className="text-slate-400 text-sm leading-relaxed max-w-sm mb-6">
+              Pemberdayaan talenta berbasis AI untuk menciptakan kemandirian ekonomi digital bagi seluruh masyarakat Indonesia.
+            </p>
+            <div className="flex gap-3">
+              {[Instagram, Twitter, Linkedin, Github].map((Icon, i) => (
+                <button key={i} className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-[#F0D060] transition-all">
+                  <Icon className="w-4 h-4" />
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Feedback form */}
-            {showModal === "feedback" ? (
-              submitted ? (
-                <div className="success-state">
-                  <div style={{ fontSize: "3rem", marginBottom: 12 }}>🎉</div>
-                  <div style={{ fontWeight: 700, color: "#1F7A63", fontSize: "1rem", marginBottom: 6 }}>Terima kasih atas feedbackmu!</div>
-                  <div style={{ fontSize: "0.85rem", color: "#64748B" }}>Masukan kamu sangat berarti untuk pengembangan KARYANUSA 💚</div>
-                </div>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  <div>
-                    <label style={{ fontSize: "12px", fontWeight: 600, color: "#64748B", display: "block", marginBottom: 6 }}>Nama (opsional)</label>
-                    <input className="feedback-input" placeholder="Nama kamu..." value={feedback.name} onChange={e => setFeedback(p => ({ ...p, name: e.target.value }))} />
+          {/* NAV LINKS */}
+          <div>
+            <h4 className="text-[10px] font-black text-[#F0D060] uppercase tracking-widest mb-5">Eksplorasi</h4>
+            <ul className="space-y-3 text-xs font-bold text-slate-300">
+              <li><button onClick={() => window.scrollTo({top:0, behavior:'smooth'})} className="hover:text-white transition-all">Skill Discovery</button></li>
+              <li><button onClick={() => setShowModal("feedback")} className="hover:text-white transition-all flex items-center gap-2">Kirim Feedback <Sparkles className="w-3 h-3 text-[#F0D060]" /></button></li>
+              <li><button onClick={onGetStarted} className="px-4 py-2 bg-[#1F7A63] text-white rounded-lg hover:bg-[#25957A] transition-all mt-2">Mulai Journey</button></li>
+            </ul>
+          </div>
+
+          {/* INFO LINKS */}
+          <div>
+            <h4 className="text-[10px] font-black text-[#F0D060] uppercase tracking-widest mb-5">Informasi</h4>
+            <ul className="space-y-3 text-xs font-bold text-slate-300">
+              <li><button onClick={() => setShowModal("Tentang Kami")} className="hover:text-white transition-all">Tentang Kami</button></li>
+              <li><button onClick={() => setShowModal("Kebijakan Privasi")} className="hover:text-white transition-all">Kebijakan Privasi</button></li>
+              <li><a href="mailto:hello@karyanusa.id" className="flex items-center gap-2 hover:text-white transition-all"><Mail className="w-3.5 h-3.5" /> hello@karyanusa.id</a></li>
+            </ul>
+          </div>
+
+          {/* COMPACT HELP BOX */}
+          <div className="bg-white/5 p-5 rounded-3xl border border-white/5">
+            <h4 className="text-[10px] font-black text-[#F0D060] uppercase tracking-widest mb-4">Butuh Bantuan?</h4>
+            <p className="text-[11px] text-slate-400 mb-4 font-medium leading-relaxed">Punya masukan untuk tim pengembang Karyanusa?</p>
+            <button 
+              onClick={() => setShowModal("feedback")} 
+              className="w-full py-3 bg-white text-[#1E3A5F] font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-[#F0D060] transition-all"
+            >
+              Hubungi Kami
+            </button>
+          </div>
+        </div>
+
+        {/* BOTTOM BAR */}
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+            © {currentYear} KARYANUSA — Empowering Indonesian Talents.
+          </p>
+          <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-500 uppercase">
+        
+          </div>
+        </div>
+      </div>
+
+      {/* --- MODAL SYSTEM --- */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} 
+              className="bg-white rounded-[40px] w-full max-w-sm p-8 relative shadow-2xl border border-white/10 overflow-hidden"
+            >
+              <button onClick={() => setShowModal(null)} className="absolute top-6 right-6 p-2 bg-slate-50 rounded-full hover:bg-red-50 hover:text-red-500 transition-all"><X className="w-4 h-4" /></button>
+              
+              {showModal === "feedback" ? (
+                submitted ? (
+                  <div className="text-center py-8 space-y-4">
+                    <div className="text-6xl">🎉</div>
+                    <h3 className="text-xl font-black text-[#1E3A5F]">Tersimpan!</h3>
+                    <p className="text-slate-500 text-xs px-4 leading-relaxed">Terima kasih atas kontribusi Anda membangun KARYANUSA.</p>
                   </div>
-                  <div>
-                    <label style={{ fontSize: "12px", fontWeight: 600, color: "#64748B", display: "block", marginBottom: 6 }}>Rating Pengalaman</label>
-                    <div style={{ display: "flex", gap: 4 }}>
-                      {[1,2,3,4,5].map(n => (
-                        <button key={n} className="star-btn" onClick={() => setFeedback(p => ({ ...p, rating: n }))}>
-                          {n <= feedback.rating ? "⭐" : "☆"}
-                        </button>
-                      ))}
+                ) : (
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3">
+                       <MessageSquare className="w-6 h-6 text-[#1F7A63]" />
+                       <h3 className="text-xl font-black text-[#1E3A5F]">Feedback</h3>
                     </div>
+                    <div className="flex justify-center gap-2 pb-2">
+                       {[1,2,3,4,5].map(n => (
+                         <button key={n} onClick={() => setFeedback(p => ({...p, rating: n}))}>
+                           <Star className={`w-7 h-7 ${n <= feedback.rating ? "fill-[#F0D060] text-[#F0D060]" : "text-slate-200"}`} />
+                         </button>
+                       ))}
+                    </div>
+                    <div className="space-y-3">
+                       <input className="w-full p-4 bg-slate-50 border border-slate-100 rounded-xl text-xs outline-none focus:border-[#1F7A63]" placeholder="Nama (opsional)" value={feedback.name} onChange={e => setFeedback(p => ({...p, name: e.target.value}))} />
+                       <textarea className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl text-xs outline-none focus:border-[#1F7A63] min-h-[120px]" placeholder="Pesan Anda... *" value={feedback.message} onChange={e => setFeedback(p => ({...p, message: e.target.value}))} />
+                    </div>
+                    <button onClick={handleSubmitFeedback} disabled={!feedback.message.trim()} className="w-full py-4 bg-[#1F7A63] text-white font-black rounded-2xl shadow-lg active:scale-95 transition-all">KIRIM SEKARANG</button>
                   </div>
-                  <div>
-                    <label style={{ fontSize: "12px", fontWeight: 600, color: "#64748B", display: "block", marginBottom: 6 }}>Pesan / Saran *</label>
-                    <textarea className="feedback-textarea" placeholder="Ceritakan pengalamanmu menggunakan KARYANUSA, atau saran untuk kami..." value={feedback.message} onChange={e => setFeedback(p => ({ ...p, message: e.target.value }))} />
+                )
+              ) : (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-green-50 rounded-xl text-[#1F7A63]">
+                      {/* FIX: Menggunakan React.createElement untuk memanggil ikon dari objek */}
+                      {React.createElement(modalContent[showModal]?.icon || Info, { className: "w-5 h-5" })}
+                    </div>
+                    <h3 className="text-xl font-black text-[#1E3A5F]">{modalContent[showModal]?.title}</h3>
                   </div>
-                  <button className="submit-btn" onClick={handleSubmitFeedback} disabled={!feedback.message.trim()}>
-                    Kirim Feedback 🚀
-                  </button>
-                  <p style={{ fontSize: "11px", color: "#94A3B8", textAlign: "center" }}>Feedbackmu bersifat anonim dan tidak akan dipublikasikan tanpa izin.</p>
+                  {modalContent[showModal]?.content}
+                  <button onClick={() => setShowModal(null)} className="w-full py-3 bg-slate-900 text-white font-black rounded-xl uppercase text-[9px] tracking-widest">Tutup</button>
                 </div>
-              )
-            ) : (
-              /* Info modal content */
-              modalContent[showModal]?.content
-            )}
-
+              )}
+            </motion.div>
           </div>
-        </div>
-      )}
-
-      <footer className="footer-section" style={{ background: "linear-gradient(135deg, #0F2337 0%, #1E3A5F 100%)" }}>
-
-        {/* CTA strip */}
-        <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "36px 20px", textAlign: "center" }}>
-          <h3 style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "clamp(1.3rem, 2.5vw, 2rem)", fontWeight: 700, color: "#fff", marginBottom: "10px" }}>
-            Siap Mengubah Skill Jadi <span style={{ color: "#D4AF37" }}>Penghasilan?</span>
-          </h3>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.9rem", marginBottom: "22px" }}>
-            Bergabung dengan ribuan orang yang sudah menemukan peluang ekonominya.
-          </p>
-          <button
-            onClick={() => scrollTo("discover")}
-            style={{ background: "linear-gradient(135deg, #1F7A63, #25957A)", color: "#fff", border: "none", borderRadius: "12px", padding: "13px 28px", fontSize: "0.9rem", fontWeight: 600, cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif", boxShadow: "0 4px 18px rgba(31,122,99,0.4)", transition: "all 0.2s ease" }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px)" }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)" }}
-          >
-            🚀 Mulai Gratis Sekarang
-          </button>
-        </div>
-
-        {/* Main grid */}
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-12">
-          <div className="footer-grid">
-
-            {/* Brand */}
-            <div>
-              <div style={{ fontFamily: "'Lora', Georgia, serif", fontWeight: 700, fontSize: "1.15rem", color: "#fff", marginBottom: "10px", display: "flex", alignItems: "center", gap: 4 }}>
-                KARYANUSA
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#1F7A63", display: "inline-block", marginBottom: 6 }} />
-              </div>
-              <p style={{ fontSize: "0.83rem", color: "rgba(255,255,255,0.42)", lineHeight: 1.7, maxWidth: "220px", marginBottom: 16 }}>
-                Platform AI yang membantu masyarakat menemukan peluang ekonomi dari keterampilan mereka.
-              </p>
-              <button
-                onClick={() => setShowModal("feedback")}
-                style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 9, padding: "8px 16px", fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.7)", cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif", transition: "all 0.18s" }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.14)"; (e.currentTarget as HTMLButtonElement).style.color = "#fff" }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.08)"; (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.7)" }}
-              >
-                💬 Kirim Feedback
-              </button>
-            </div>
-
-            {/* Platform */}
-            <div>
-              <div style={{ fontWeight: 600, color: "#fff", fontSize: "0.88rem", marginBottom: "14px" }}>Platform</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {[
-                  { label: "Skill Discovery", id: "discover" },
-                  { label: "Opportunity Finder", id: "opportunities" },
-                  { label: "AI Assistant", id: "assistant" },
-                ].map(l => (
-                  <button key={l.label} className="footer-link" onClick={() => scrollTo(l.id)}>{l.label}</button>
-                ))}
-              </div>
-            </div>
-
-            {/* Info */}
-            <div>
-              <div style={{ fontWeight: 600, color: "#fff", fontSize: "0.88rem", marginBottom: "14px" }}>Info</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                {["Tentang Kami", "Kebijakan Privasi", "Kontak"].map(l => (
-                  <button key={l} className="info-link" onClick={() => setShowModal(l)}>{l}</button>
-                ))}
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* Bottom bar */}
-        <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", padding: "14px 20px", textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
-          <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.25)" }}>
-            © 2026 KARYANUSA — Empowering Skills into Economic Opportunities
-          </p>
-          <button
-            onClick={() => setShowModal("feedback")}
-            style={{ fontSize: "11px", color: "rgba(255,255,255,0.35)", background: "none", border: "none", cursor: "pointer", fontFamily: "'Plus Jakarta Sans', sans-serif", transition: "color 0.18s" }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "#D4AF37" }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.35)" }}
-          >
-            💬 Feedback
-          </button>
-        </div>
-
-      </footer>
-    </>
-  )
+        )}
+      </AnimatePresence>
+    </footer>
+  );
 }

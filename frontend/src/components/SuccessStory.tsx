@@ -1,283 +1,122 @@
-import { useState, useEffect, useRef } from "react"
+import { motion } from "framer-motion"
+import { cn } from "../lib/utils"
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar" // Pastikan folder namanya 'ui' kecil
+import { Quote, Sparkles, TrendingUp } from "lucide-react" // CheckCircle2 dihapus karena tidak dipakai
 
 const stories = [
-  {
-    name: "Rizky Aditya",
-    location: "Bandung, Jawa Barat",
-    skill: "Programming",
-    avatar: "👨‍💻",
-    color: "#1F7A63",
-    bg: "rgba(31,122,99,0.07)",
-    border: "rgba(31,122,99,0.15)",
-    before: "Mahasiswa semester 6 yang kerja sambilan jadi kasir minimarket",
-    after: "Freelance web developer dengan penghasilan Rp 8 juta/bulan",
-    income: "Rp 8 jt/bulan",
-    duration: "4 bulan",
-    quote: "Aku kira skill coding yang aku pelajari sendiri itu ga ada nilainya. Ternyata setelah pakai KARYANUSA, aku sadar bisa langsung jual skill itu ke klien nyata. Bulan ketiga udah bisa bayar kuliah sendiri.",
-    tags: ["Freelance", "Web Dev", "Upwork"],
-  },
-  {
-    name: "Sari Dewi Putri",
-    location: "Surabaya, Jawa Timur",
-    skill: "Desain Grafis",
-    avatar: "👩‍🎨",
-    color: "#6366F1",
-    bg: "rgba(99,102,241,0.07)",
-    border: "rgba(99,102,241,0.15)",
-    before: "Ibu rumah tangga yang hobi desain poster untuk acara RT",
-    after: "Pemilik toko template Canva dengan 400+ pelanggan aktif",
-    income: "Rp 5 jt/bulan",
-    duration: "6 bulan",
-    quote: "Saya pikir desain itu cuma hobi. Roadmap dari KARYANUSA bikin saya step-by-step dari bikin portofolio sampai jualan template. Sekarang sambil ngurus anak pun bisa tetap menghasilkan.",
-    tags: ["Passive Income", "Canva", "Template"],
-  },
-  {
-    name: "Fajar Nugroho",
-    location: "Yogyakarta, DIY",
-    skill: "Marketing",
-    avatar: "👨‍💼",
-    color: "#DC2626",
-    bg: "rgba(239,68,68,0.07)",
-    border: "rgba(239,68,68,0.15)",
-    before: "Fresh graduate yang belum dapat kerja selama 8 bulan",
-    after: "Social media manager untuk 4 brand UMKM lokal",
-    income: "Rp 12 jt/bulan",
-    duration: "3 bulan",
-    quote: "8 bulan nganggur bikin down banget. Tapi ternyata skill marketing yang aku pelajari dari YouTube bisa langsung dipakai. KARYANUSA kasih tau caranya mulai dari nol sampai dapat klien pertama dalam 3 minggu.",
-    tags: ["Social Media", "UMKM", "Meta Ads"],
-  },
-  {
-    name: "Nadya Rahma",
-    location: "Medan, Sumatera Utara",
-    skill: "Menulis",
-    avatar: "👩‍💻",
-    color: "#DB2777",
-    bg: "rgba(236,72,153,0.07)",
-    border: "rgba(236,72,153,0.15)",
-    before: "Guru SD yang suka nulis di blog pribadi tanpa penghasilan",
-    after: "Content writer freelance + penulis e-book bestseller lokal",
-    income: "Rp 6 jt/bulan",
-    duration: "5 bulan",
-    quote: "Blog saya sudah jalan 2 tahun tapi ga pernah termonetisasi. AI Assistant KARYANUSA bantu saya susun strategi dan kenalan sama platform yang tepat. Sekarang tulisan saya benar-benar dibayar!",
-    tags: ["Content Writing", "E-book", "SEO"],
-  },
-  {
-    name: "Bima Sakti",
-    location: "Makassar, Sulawesi Selatan",
-    skill: "Fotografi",
-    avatar: "📸",
-    color: "#D97706",
-    bg: "rgba(245,158,11,0.07)",
-    border: "rgba(245,158,11,0.15)",
-    before: "Karyawan swasta yang foto-foto cuma buat feed Instagram pribadi",
-    after: "Fotografer produk & event dengan studio mini sendiri",
-    income: "Rp 10 jt/bulan",
-    duration: "7 bulan",
-    quote: "Awalnya malu nawarin jasa foto karena takut ditolak. Roadmap KARYANUSA step-by-step banget — dari bikin portofolio sampai cara pricing yang benar. Sekarang malah sering nolak klien karena jadwal penuh.",
-    tags: ["Foto Produk", "Event", "Studio"],
-  },
-  {
-    name: "Citra Maharani",
-    location: "Jakarta Selatan, DKI",
-    skill: "Public Speaking",
-    avatar: "🎤",
-    color: "#B8942A",
-    bg: "rgba(201,168,76,0.07)",
-    border: "rgba(201,168,76,0.2)",
-    before: "Mahasiswi aktif organisasi yang sering jadi MC acara kampus gratis",
-    after: "MC profesional & trainer public speaking korporat",
-    income: "Rp 15 jt/bulan",
-    duration: "5 bulan",
-    quote: "Dulu MC gratis mulu karena ga tau cara charge yang benar. KARYANUSA bikin aku sadar nilai skill ku jauh lebih tinggi dari yang aku kira. Sekarang sekali tampil bisa dapat lebih dari UMR.",
-    tags: ["MC Profesional", "Training", "Korporat"],
-  },
+  { name: "Rizky Aditya", handle: "@rizky_dev", skill: "Programming", income: "Rp 8jt/bln", text: "Dulu skill codingku cuma hobi, sekarang dapet klien nyata berkat roadmap Karyanusa.", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" },
+  { name: "Sari Dewi", handle: "@saridesign", skill: "Desain Grafis", income: "Rp 5jt/bln", text: "Roadmap Karyanusa sangat praktis, hobi desain saya kini menghasilkan profit di Canva.", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face" },
+  { name: "Fajar Nugroho", handle: "@fajar_mkt", skill: "Marketing", income: "Rp 12jt/bln", text: "Karyanusa kasih tau cara dapet klien pertama dalam 3 minggu. Sangat aplikatif!", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face" },
+  { name: "Nadya Rahma", handle: "@nad_writer", skill: "Menulis", income: "Rp 6jt/bln", text: "AI Assistant bantu susun strategi e-book sampai jadi bestseller. Hobiku sekarang dibayar.", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face" },
+  { name: "Bima Sakti", handle: "@bima_photo", skill: "Fotografi", income: "Rp 10jt/bln", text: "Kini jadwal pemotretan penuh! Dari portofolio sampe pricing dibantu Karyanusa.", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" },
+  { name: "Citra M.", handle: "@citra_speak", skill: "Public Speaking", income: "Rp 15jt/bln", text: "Sekali tampil bisa dapat lebih dari UMR. Terima kasih Karyanusa!", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face" },
 ]
 
 export default function SuccessStory() {
-  const [active, setActive] = useState(0)
-  const [animating, setAnimating] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target) } }),
-      { threshold: 0.1 }
-    )
-    if (sectionRef.current) observer.observe(sectionRef.current)
-    return () => observer.disconnect()
-  }, [])
-
-  // Auto-rotate every 5s
-  useEffect(() => {
-    const interval = setInterval(() => {
-      goTo((active + 1) % stories.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [active])
-
-  const goTo = (idx: number) => {
-    if (idx === active || animating) return
-    setAnimating(true)
-    setTimeout(() => { setActive(idx); setAnimating(false) }, 220)
-  }
-
-  const s = stories[active]
-
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        .story-section { font-family: 'Plus Jakarta Sans', sans-serif; }
+    <section id="success" className="relative py-24 bg-[#0F172A] overflow-hidden font-sans">
+      
+      {/* Background Decor */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#1F7A63]/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#F0D060]/5 rounded-full blur-[100px]" />
+      </div>
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-16 text-center">
+        {/* Header */}
+        <div className="flex flex-col items-center gap-4 px-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[#F0D060] text-[10px] font-black uppercase tracking-[0.3em] mb-4"
+          >
+            <Sparkles className="w-3 h-3 fill-[#F0D060]" /> Real Impact Stories
+          </motion.div>
+          <h2 className="max-w-[800px] text-4xl font-serif font-black text-white md:text-6xl tracking-tighter uppercase leading-none">
+            Mereka Sudah <span className="text-[#1F7A63]">Membuktikannya.</span>
+          </h2>
+          <p className="max-w-[600px] text-slate-400 text-lg font-medium">
+            Bergabunglah dengan ribuan talenta yang telah bertransformasi dari hobi menjadi penghasilan nyata.
+          </p>
+        </div>
 
-        .story-wrap { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
-        .story-wrap.visible { opacity: 1; transform: translateY(0); }
-
-        .story-card { transition: opacity 0.22s ease, transform 0.22s ease; }
-        .story-card.out { opacity: 0; transform: translateY(8px); }
-        .story-card.in  { animation: fadeIn 0.3s ease both; }
-
-        .avatar-circle {
-          width: 64px; height: 64px; border-radius: 50%;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 28px; flex-shrink: 0;
-          box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-        }
-
-        .dot-btn { width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer; transition: all 0.2s ease; padding: 0; }
-        .dot-btn.active { width: 22px; border-radius: 4px; }
-
-        .thumb-btn {
-          display: flex; flex-direction: column; align-items: center; gap: 6px;
-          background: none; border: 1.5px solid #EEF0F4; border-radius: 12px;
-          padding: 10px 8px; cursor: pointer; transition: all 0.18s ease;
-          font-family: 'Plus Jakarta Sans', sans-serif; flex: 1;
-        }
-        .thumb-btn:hover { border-color: #CBD5E1; transform: translateY(-2px); }
-        .thumb-btn.active { border-color: var(--thumb-color); background: var(--thumb-bg); }
-
-        .stat-chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; }
-
-        @keyframes quoteIn { from { opacity: 0; } to { opacity: 1; } }
-        .quote-text { animation: quoteIn 0.35s ease both; }
-      `}</style>
-
-      <section className="story-section py-14 sm:py-16" style={{ background: "#F6F5F2" }}>
-        <div className="max-w-6xl mx-auto px-5 sm:px-6">
-
-          {/* Header */}
-          <div className="text-center mb-10">
-            <span style={{ display: "inline-block", background: "rgba(31,122,99,0.09)", color: "#1F7A63", fontSize: "12px", fontWeight: 600, padding: "5px 14px", borderRadius: "100px", marginBottom: "12px", border: "1px solid rgba(31,122,99,0.18)" }}>
-              Kisah Sukses
-            </span>
-            <h2 style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "clamp(1.55rem, 3vw, 2.4rem)", fontWeight: 700, color: "#1E3A5F", letterSpacing: "-0.02em", lineHeight: 1.2 }}>
-              Mereka Sudah <span style={{ color: "#1F7A63" }}>Membuktikannya</span>
-            </h2>
-            <p style={{ marginTop: "8px", color: "#64748B", fontSize: "0.92rem", lineHeight: 1.65 }}>
-              Ribuan orang telah mengubah skill sehari-hari menjadi penghasilan nyata bersama KARYANUSA.
-            </p>
-          </div>
-
-          <div ref={sectionRef} className="story-wrap">
-            <div className="grid lg:grid-cols-3 gap-5 items-start">
-
-              {/* Left: thumbnail list */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                {stories.map((st, i) => (
-                  <button
-                    key={i}
-                    className={`thumb-btn ${active === i ? "active" : ""}`}
-                    style={{ "--thumb-color": st.color, "--thumb-bg": st.bg } as React.CSSProperties}
-                    onClick={() => goTo(i)}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
-                      <div style={{ width: 34, height: 34, borderRadius: "50%", background: st.bg, border: `1px solid ${st.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>{st.avatar}</div>
-                      <div style={{ textAlign: "left", minWidth: 0 }}>
-                        <div style={{ fontSize: "12px", fontWeight: 700, color: active === i ? st.color : "#1E3A5F", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{st.name}</div>
-                        <div style={{ fontSize: "11px", color: "#94A3B8" }}>{st.skill}</div>
+        {/* Marquee Section */}
+        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+          <div className="group flex overflow-hidden p-4 [--gap:1.5rem] [gap:var(--gap)] flex-row [--duration:40s]">
+            <div className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row group-hover:[animation-play-state:paused]">
+              {[...Array(2)].map((_, setIdx) => (
+                <div key={setIdx} className="flex gap-[var(--gap)]">
+                  {stories.map((story, i) => (
+                    <div
+                      key={`${setIdx}-${i}`}
+                      className={cn(
+                        "flex flex-col rounded-[32px] border border-white/10 shadow-2xl",
+                        "bg-slate-900/40 backdrop-blur-xl",
+                        "p-8 text-start w-[350px] transition-all duration-500 hover:border-[#1F7A63]/50 hover:-translate-y-2"
+                      )}
+                    >
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-12 w-12 border-2 border-white/10">
+                            <AvatarImage src={story.avatar} alt={story.name} />
+                            <AvatarFallback className="bg-[#1F7A63] text-white">KN</AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col">
+                            <h3 className="text-sm font-black text-white tracking-tight leading-none uppercase">
+                              {story.name}
+                            </h3>
+                            <p className="text-[10px] text-slate-500 font-bold mt-1">
+                              {story.handle}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="p-2 bg-[#1F7A63]/10 rounded-lg">
+                           <TrendingUp className="w-4 h-4 text-[#1F7A63]" />
+                        </div>
                       </div>
-                      {active === i && <div style={{ marginLeft: "auto", width: 6, height: 6, borderRadius: "50%", background: st.color, flexShrink: 0 }} />}
-                    </div>
-                  </button>
-                ))}
-              </div>
 
-              {/* Right: main story card */}
-              <div className="lg:col-span-2">
-                <div
-                  className={`story-card ${animating ? "out" : "in"}`}
-                  style={{ background: "#fff", borderRadius: 20, padding: "24px", border: `1.5px solid ${s.border}`, boxShadow: "0 4px 20px rgba(30,58,95,0.07)" }}
-                >
-                  {/* Top: avatar + name + stats */}
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: 14, marginBottom: 18, flexWrap: "wrap" }}>
-                    <div className="avatar-circle" style={{ background: s.bg, border: `2px solid ${s.border}` }}>{s.avatar}</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 700, color: "#1E3A5F", fontSize: "1rem" }}>{s.name}</div>
-                      <div style={{ fontSize: "12px", color: "#94A3B8", marginTop: 2 }}>📍 {s.location}</div>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
-                        <span className="stat-chip" style={{ background: s.bg, border: `1px solid ${s.border}`, color: s.color }}>💰 {s.income}</span>
-                        <span className="stat-chip" style={{ background: "rgba(30,58,95,0.06)", border: "1px solid rgba(30,58,95,0.12)", color: "#1E3A5F" }}>⏱️ {s.duration}</span>
-                        <span className="stat-chip" style={{ background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.18)", color: "#B8942A" }}>✨ {s.skill}</span>
+                      <div className="relative mb-6">
+                         <Quote className="absolute -top-2 -left-2 w-8 h-8 text-white/5" />
+                         <p className="text-sm text-slate-300 font-medium leading-relaxed italic relative z-10">
+                            "{story.text}"
+                         </p>
+                      </div>
+
+                      <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+                         <div className="flex flex-col">
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Skill</span>
+                            <span className="text-xs font-bold text-[#1F7A63]">{story.skill}</span>
+                         </div>
+                         <div className="flex flex-col text-right">
+                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Revenue</span>
+                            <span className="text-xs font-black text-[#F0D060]">{story.income}</span>
+                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Before → After */}
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: 10, alignItems: "center", marginBottom: 18 }}>
-                    <div style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.12)", borderRadius: 10, padding: "10px 12px" }}>
-                      <div style={{ fontSize: "10px", fontWeight: 700, color: "#DC2626", marginBottom: 4, letterSpacing: "0.05em" }}>SEBELUM</div>
-                      <div style={{ fontSize: "0.8rem", color: "#64748B", lineHeight: 1.5 }}>{s.before}</div>
-                    </div>
-                    <div style={{ fontSize: "18px", flexShrink: 0 }}>→</div>
-                    <div style={{ background: s.bg, border: `1px solid ${s.border}`, borderRadius: 10, padding: "10px 12px" }}>
-                      <div style={{ fontSize: "10px", fontWeight: 700, color: s.color, marginBottom: 4, letterSpacing: "0.05em" }}>SETELAH</div>
-                      <div style={{ fontSize: "0.8rem", color: "#1E3A5F", fontWeight: 500, lineHeight: 1.5 }}>{s.after}</div>
-                    </div>
-                  </div>
-
-                  {/* Quote */}
-                  <div style={{ position: "relative", padding: "14px 16px", background: "#F8FAFB", borderRadius: 12, borderLeft: `3px solid ${s.color}`, marginBottom: 16 }}>
-                    <div style={{ fontSize: "1.8rem", color: s.color, lineHeight: 1, marginBottom: 4, opacity: 0.4 }}>"</div>
-                    <p key={active} className="quote-text" style={{ fontSize: "0.88rem", color: "#1E3A5F", lineHeight: 1.75, fontStyle: "italic" }}>
-                      {s.quote}
-                    </p>
-                  </div>
-
-                  {/* Tags */}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 7, alignItems: "center" }}>
-                    {s.tags.map(t => (
-                      <span key={t} style={{ fontSize: "11px", color: "#64748B", background: "#F1F5F9", border: "1px solid #E2E8F0", borderRadius: "100px", padding: "3px 10px" }}>#{t}</span>
-                    ))}
-                    <div style={{ marginLeft: "auto", display: "flex", gap: 5 }}>
-                      {stories.map((_, i) => (
-                        <button key={i} className={`dot-btn ${active === i ? "active" : ""}`} style={{ background: active === i ? s.color : "#CBD5E1" }} onClick={() => goTo(i)} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Bottom stats strip */}
-            <div style={{ marginTop: 24, background: "#fff", borderRadius: 14, padding: "16px 24px", border: "1px solid #EEF0F4", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, textAlign: "center" }}>
-              {[
-                { num: "10.000+", label: "Pengguna Aktif", icon: "👥" },
-                { num: "Rp 2–15 jt", label: "Rata-rata Penghasilan/Bulan", icon: "💰" },
-                { num: "3–7 bulan", label: "Rata-rata Waktu Hasil Pertama", icon: "⏱️" },
-              ].map(stat => (
-                <div key={stat.label}>
-                  <div style={{ fontSize: "18px", marginBottom: 4 }}>{stat.icon}</div>
-                  <div style={{ fontFamily: "'Lora', serif", fontWeight: 700, fontSize: "1.1rem", color: "#1E3A5F" }}>{stat.num}</div>
-                  <div style={{ fontSize: "11px", color: "#94A3B8", marginTop: 2 }}>{stat.label}</div>
+                  ))}
                 </div>
               ))}
             </div>
-
           </div>
+
+          <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/4 bg-gradient-to-r from-[#0F172A] sm:block" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/4 bg-gradient-to-l from-[#0F172A] sm:block" />
         </div>
-      </section>
-    </>
+
+        {/* Global Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl px-6">
+           {[
+             { label: "Talenta Aktif", val: "10.000+", desc: "Tumbuh setiap hari" },
+             { label: "Rata-rata Profit", val: "Rp 15jt", desc: "Per bulan per user" },
+             { label: "Success Rate", val: "98%", desc: "Berdasarkan roadmap" }
+           ].map((stat, i) => (
+             <div key={i} className="p-8 bg-white/[0.02] border border-white/5 rounded-[40px] shadow-inner text-center">
+                <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">{stat.label}</div>
+                <div className="text-4xl font-serif font-black text-white mb-1 tracking-tight">{stat.val}</div>
+                <div className="text-xs font-bold text-[#1F7A63] uppercase tracking-tighter opacity-60">{stat.desc}</div>
+             </div>
+           ))}
+        </div>
+      </div>
+    </section>
   )
 }

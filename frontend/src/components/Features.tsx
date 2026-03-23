@@ -1,103 +1,71 @@
-import { useEffect, useRef } from "react"
+import { motion } from "framer-motion";
+import { BrainCircuit, Compass, Bot, ArrowUpRight } from "lucide-react";
 
 export default function Features() {
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
-  const statsRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target) }
-      }),
-      { threshold: 0.15 }
-    )
-    cardRefs.current.forEach(r => { if (r) observer.observe(r) })
-    if (statsRef.current) observer.observe(statsRef.current)
-    return () => observer.disconnect()
-  }, [])
-
   const features = [
-    { icon: "🔍", title: "Skill Discovery", desc: "Jawab beberapa pertanyaan singkat, AI mengidentifikasi keterampilan tersembunyi yang bisa kamu monetisasi.", accent: "#1F7A63", bg: "rgba(31,122,99,0.07)", border: "rgba(31,122,99,0.15)" },
-    { icon: "🎯", title: "Opportunity Recommendation", desc: "Dapatkan rekomendasi peluang usaha yang relevan dan realistis berdasarkan skill yang kamu miliki.", accent: "#1E3A5F", bg: "rgba(30,58,95,0.07)", border: "rgba(30,58,95,0.15)" },
-    { icon: "🤖", title: "AI Business Assistant", desc: "Konsultasikan strategi bisnis, cara pemasaran, dan langkah memulai usaha langsung dengan AI mentor.", accent: "#C9A84C", bg: "rgba(201,168,76,0.07)", border: "rgba(201,168,76,0.2)" },
-  ]
+    {
+      icon: BrainCircuit,
+      title: "Skill Discovery",
+      desc: "Algoritma AI tingkat tinggi untuk mengidentifikasi keahlian yang paling laku di pasar global saat ini.",
+      color: "from-[#1F7A63] to-[#25957A]"
+    },
+    {
+      icon: Compass,
+      title: "Smart Opportunities",
+      desc: "Bukan sekadar saran, kami memberikan data real-time tentang demand pasar dan potensi profit tiap skill.",
+      color: "from-[#1E3A5F] to-[#1F7A63]"
+    },
+    {
+      icon: Bot,
+      title: "AI Business Mentor",
+      desc: "Chatbot mentor yang tersedia 24/7 untuk membimbing strategi pemasaran dan manajemen bisnis kamu.",
+      color: "from-[#F0D060] to-[#C9A84C]"
+    }
+  ];
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
-        .features-section { font-family: 'Plus Jakarta Sans', sans-serif; }
+    <section id="features" className="max-w-6xl mx-auto px-6 font-sans py-20">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16 px-4">
+        {/* Menggunakan motion di sini agar error hilang dan teks muncul perlahan */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="max-w-xl"
+        >
+          <h2 className="font-serif text-4xl md:text-6xl font-black text-white leading-none mb-6">
+            TEKNOLOGI <br/> <span className="text-[#1F7A63]">MASA DEPAN.</span>
+          </h2>
+          <p className="text-slate-400 text-lg">Platform pertama di Indonesia yang menggunakan Deep Analysis AI untuk ekonomi digital.</p>
+        </motion.div>
+        
+        <button className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-xs uppercase tracking-widest hover:bg-[#1F7A63] transition-all">
+          Explore All Features
+        </button>
+      </div>
 
-        .scroll-fade { opacity: 0; transform: translateY(22px); transition: opacity 0.55s ease, transform 0.55s ease; }
-        .scroll-fade.visible { opacity: 1; transform: translateY(0); }
-        .scroll-fade:nth-child(2) { transition-delay: 0.1s; }
-        .scroll-fade:nth-child(3) { transition-delay: 0.2s; }
-
-        .feature-card { background: #fff; border-radius: 16px; padding: 22px 20px; border: 1px solid #EEF0F4; box-shadow: 0 1px 8px rgba(30,58,95,0.05); transition: transform 0.25s ease, box-shadow 0.25s ease; position: relative; overflow: hidden; }
-        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(30,58,95,0.09); }
-        .feature-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; opacity: 0; transition: opacity 0.25s; }
-        .feature-card:hover::before { opacity: 1; }
-        .card-0::before { background: linear-gradient(90deg, #1F7A63, #25957A); }
-        .card-1::before { background: linear-gradient(90deg, #1E3A5F, #2A5298); }
-        .card-2::before { background: linear-gradient(90deg, #C9A84C, #F0D060); }
-
-        .stats-bar { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s; }
-        .stats-bar.visible { opacity: 1; transform: translateY(0); }
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        @media (min-width: 640px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
-      `}</style>
-
-      <section className="features-section py-14 sm:py-16 bg-white">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6">
-
-          <div className="text-center mb-10">
-            <span style={{ display: "inline-block", background: "rgba(31,122,99,0.09)", color: "#1F7A63", fontSize: "12px", fontWeight: 600, padding: "5px 14px", borderRadius: "100px", marginBottom: "12px", border: "1px solid rgba(31,122,99,0.18)" }}>
-              Apa yang bisa KARYANUSA lakukan?
-            </span>
-            <h2 style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "clamp(1.55rem, 3vw, 2.4rem)", fontWeight: 700, color: "#1E3A5F", letterSpacing: "-0.02em", lineHeight: 1.2 }}>
-              Fitur Utama <span style={{ color: "#1F7A63" }}>KARYANUSA</span>
-            </h2>
-            <p style={{ marginTop: "8px", color: "#64748B", fontSize: "0.92rem", maxWidth: "420px", margin: "8px auto 0", lineHeight: 1.65 }}>
-              Semua yang kamu butuhkan untuk mengubah keterampilan menjadi penghasilan nyata.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map((f, i) => (
-              <div
-                key={f.title}
-                ref={(el) => { cardRefs.current[i] = el }}
-                className={`feature-card card-${i} scroll-fade`}
-              >
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: f.bg, border: `1px solid ${f.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, marginBottom: 14 }}>{f.icon}</div>
-                <h3 style={{ fontWeight: 700, fontSize: "0.97rem", color: "#1E3A5F", marginBottom: 7 }}>{f.title}</h3>
-                <p style={{ fontSize: "0.85rem", color: "#64748B", lineHeight: 1.65, marginBottom: 14 }}>{f.desc}</p>
-                <div style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: f.accent }}>
-                  Pelajari lebih lanjut <span>→</span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div ref={statsRef} className="stats-bar" style={{ marginTop: "32px", background: "linear-gradient(135deg, #F0F7F5, #EDF3F8)", borderRadius: "14px", padding: "20px 24px", border: "1px solid rgba(31,122,99,0.09)" }}>
-            <div className="stats-grid">
-              {[
-                { icon: "👥", num: "10.000+", label: "Pengguna Terbantu" },
-                { icon: "💼", num: "50+",     label: "Kategori Peluang" },
-                { icon: "⭐", num: "4.9/5",   label: "Rating Pengguna" },
-                { icon: "🚀", num: "< 2 min", label: "Waktu Analisis" },
-              ].map(s => (
-                <div key={s.label} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "18px", marginBottom: "3px" }}>{s.icon}</div>
-                  <div style={{ fontFamily: "'Lora', serif", fontWeight: 700, fontSize: "1.1rem", color: "#1E3A5F" }}>{s.num}</div>
-                  <div style={{ fontSize: "11px", color: "#64748B", marginTop: "1px" }}>{s.label}</div>
-                </div>
-              ))}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {features.map((f, i) => (
+          <motion.div 
+            key={i} 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className="group relative overflow-hidden bg-slate-900/50 backdrop-blur-md rounded-[48px] p-10 border border-white/5 hover:border-white/20 transition-all duration-500"
+          >
+            <div className={`absolute -bottom-20 -right-20 w-40 h-40 bg-gradient-to-br ${f.color} opacity-0 group-hover:opacity-20 blur-3xl transition-opacity duration-500`} />
+            <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center text-white mb-8 shadow-lg`}>
+              <f.icon className="w-7 h-7" />
             </div>
-          </div>
-
-        </div>
-      </section>
-    </>
-  )
+            <h3 className="text-2xl font-black text-white mb-4 tracking-tight group-hover:text-[#F0D060] transition-colors">{f.title}</h3>
+            <p className="text-slate-400 text-sm leading-relaxed mb-10">{f.desc}</p>
+            <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter text-white/40 group-hover:text-white transition-colors">
+              Learn Technical Details <ArrowUpRight className="w-3 h-3" />
+            </button>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
 }

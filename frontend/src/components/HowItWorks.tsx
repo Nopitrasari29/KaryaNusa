@@ -1,194 +1,136 @@
-import { useEffect, useRef } from "react"
-
-const steps = [
-  {
-    num: "01",
-    icon: "🧠",
-    title: "Jawab Pertanyaan Singkat",
-    desc: "Ceritakan aktivitas, kebiasaan, dan hal yang kamu sukai. Tidak perlu pengalaman khusus — cukup jujur!",
-    color: "#1F7A63",
-    bg: "rgba(31,122,99,0.07)",
-    border: "rgba(31,122,99,0.15)",
-  },
-  {
-    num: "02",
-    icon: "🤖",
-    title: "AI Analisis Skillmu",
-    desc: "AI kami memproses jawabanmu dan mengidentifikasi skill tersembunyi yang bisa dimonetisasi.",
-    color: "#1E3A5F",
-    bg: "rgba(30,58,95,0.07)",
-    border: "rgba(30,58,95,0.15)",
-  },
-  {
-    num: "03",
-    icon: "🚀",
-    title: "Mulai Hasilkan Uang",
-    desc: "Dapatkan rekomendasi peluang usaha, roadmap langkah demi langkah, dan konsultasi bisnis via AI.",
-    color: "#C9A84C",
-    bg: "rgba(201,168,76,0.07)",
-    border: "rgba(201,168,76,0.2)",
-  },
-]
+import { motion } from "framer-motion";
+import { BrainCircuit, Cpu, Rocket, Zap, CheckCircle2, ArrowRight } from "lucide-react";
 
 export default function HowItWorks() {
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([])
-  const lineRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target) }
-      }),
-      { threshold: 0.15 }
-    )
-    cardRefs.current.forEach(r => { if (r) observer.observe(r) })
-    if (lineRef.current) observer.observe(lineRef.current)
-    return () => observer.disconnect()
-  }, [])
+  const steps = [
+    {
+      id: "01",
+      icon: BrainCircuit,
+      title: "Profiling & Ingestion",
+      desc: "Algoritma kami menganalisis data psikometrik, hobi, dan pengalaman harianmu untuk memetakan pola talenta unik.",
+      color: "#1F7A63",
+      tag: "Neural Data"
+    },
+    {
+      id: "02",
+      icon: Cpu,
+      title: "Deep AI Mapping",
+      desc: "Jawabanmu diproses melalui database peluang ekonomi 2026 untuk menemukan 'Hidden Skill' bernilai profit tinggi.",
+      color: "#F0D060",
+      tag: "AI Processing"
+    },
+    {
+      id: "03",
+      icon: Rocket,
+      title: "Monetization Path",
+      desc: "Kami menyusun Roadmap bisnis eksklusif, strategi pemasaran, hingga platform yang tepat untuk mulai menghasilkan uang.",
+      color: "#25957A",
+      tag: "Ready to Launch"
+    },
+  ];
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        .hiw-section { font-family: 'Plus Jakarta Sans', sans-serif; }
+    <section id="how-it-works" className="relative py-24 bg-[#0F172A] overflow-hidden font-sans">
+      
+      {/* ── ATMOSPHERIC ELEMENTS ── */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-[#1F7A63]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-[#F0D060]/5 rounded-full blur-[100px] pointer-events-none" />
 
-        .hiw-card {
-          opacity: 0; transform: translateY(24px);
-          transition: opacity 0.55s ease, transform 0.55s ease;
-        }
-        .hiw-card.visible { opacity: 1; transform: translateY(0); }
-        .hiw-card:nth-child(2) { transition-delay: 0.12s; }
-        .hiw-card:nth-child(3) { transition-delay: 0.24s; }
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-14">
+        
+        {/* HEADER: Lebih Berani & Berwarna */}
+        <div className="text-center max-w-3xl mx-auto mb-24">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-[#F0D060] text-[10px] font-black uppercase tracking-[0.3em] mb-8"
+          >
+            <Zap className="w-3 h-3 fill-[#F0D060]" /> Intelligent Workflow
+          </motion.div>
+          
+          <h2 className="font-serif text-4xl md:text-6xl font-black text-white leading-none tracking-tighter uppercase mb-8">
+            The Science Behind <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1F7A63] to-[#25957A]">Karyanusa.</span>
+          </h2>
+          <p className="text-slate-400 text-lg md:text-xl font-medium leading-relaxed">
+            Sistem kami menjembatani kesenjangan antara <span className="text-white border-b-2 border-[#1F7A63]">keahlian mentah</span> dan <span className="text-white border-b-2 border-[#F0D060]">ekosistem ekonomi digital</span>.
+          </p>
+        </div>
 
-        .hiw-line {
-          opacity: 0; transform: scaleX(0); transform-origin: left;
-          transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
-        }
-        .hiw-line.visible { opacity: 1; transform: scaleX(1); }
+        {/* STEPS GRID: Lebih Padat & Detail */}
+        <div className="grid md:grid-cols-3 gap-10 relative">
+          
+          {/* Garis Penghubung Neon */}
+          <div className="hidden lg:block absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#1F7A63]/30 to-transparent -translate-y-1/2 -z-0" />
 
-        .step-inner {
-          background: #fff; border-radius: 18px; padding: 24px 20px;
-          border: 1px solid #EEF0F4;
-          box-shadow: 0 2px 12px rgba(30,58,95,0.06);
-          height: 100%;
-          transition: transform 0.22s ease, box-shadow 0.22s ease;
-          position: relative; overflow: hidden;
-        }
-        .step-inner:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(30,58,95,0.1); }
-        .step-inner::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; border-radius: 0 0 18px 18px; opacity: 0; transition: opacity 0.22s; }
-        .step-0 .step-inner::after { background: linear-gradient(90deg, #1F7A63, #25957A); }
-        .step-1 .step-inner::after { background: linear-gradient(90deg, #1E3A5F, #2A5298); }
-        .step-2 .step-inner::after { background: linear-gradient(90deg, #C9A84C, #F0D060); }
-        .step-inner:hover::after { opacity: 1; }
-
-        @media (max-width: 1023px) { .connector-line { display: none !important; } }
-      `}</style>
-
-      <section className="hiw-section py-14 sm:py-16" style={{ background: "#fff" }}>
-        <div className="max-w-6xl mx-auto px-5 sm:px-6">
-
-          {/* Header */}
-          <div className="text-center mb-10">
-            <span style={{ display: "inline-block", background: "rgba(31,122,99,0.09)", color: "#1F7A63", fontSize: "12px", fontWeight: 600, padding: "5px 14px", borderRadius: "100px", marginBottom: "12px", border: "1px solid rgba(31,122,99,0.18)" }}>
-              Cara Kerja
-            </span>
-            <h2 style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "clamp(1.55rem, 3vw, 2.4rem)", fontWeight: 700, color: "#1E3A5F", letterSpacing: "-0.02em", lineHeight: 1.2 }}>
-              Mulai dalam <span style={{ color: "#1F7A63" }}>3 Langkah Mudah</span>
-            </h2>
-            <p style={{ marginTop: "8px", color: "#64748B", fontSize: "0.92rem", lineHeight: 1.65 }}>
-              Dari nol hingga punya rencana bisnis nyata — hanya butuh beberapa menit.
-            </p>
-          </div>
-
-          {/* Steps */}
-          <div className="relative">
-            {/* Connector line desktop */}
-            <div
-              ref={lineRef}
-              className="hiw-line connector-line"
-              style={{
-                position: "absolute", top: "52px", left: "calc(16.66% + 16px)", right: "calc(16.66% + 16px)",
-                height: "2px",
-                background: "linear-gradient(90deg, #1F7A63 0%, #1E3A5F 50%, #C9A84C 100%)",
-                zIndex: 0,
-              }}
-            />
-
-            <div className="grid sm:grid-cols-3 gap-5 relative z-10">
-              {steps.map((s, i) => (
-                <div
-                  key={i}
-                  ref={el => { cardRefs.current[i] = el }}
-                  className={`hiw-card step-${i}`}
-                >
-                  <div className="step-inner">
-                    {/* Number + icon */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                      <div style={{
-                        width: 48, height: 48, borderRadius: 14,
-                        background: s.bg, border: `1.5px solid ${s.border}`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: 22, flexShrink: 0,
-                        position: "relative",
-                      }}>
-                        {s.icon}
-                        {/* Step number bubble */}
-                        <div style={{
-                          position: "absolute", top: -8, right: -8,
-                          width: 20, height: 20, borderRadius: "50%",
-                          background: s.color, color: "#fff",
-                          fontSize: "10px", fontWeight: 700,
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                        }}>
-                          {i + 1}
-                        </div>
-                      </div>
-                      <div style={{ fontFamily: "'Lora', serif", fontSize: "2rem", fontWeight: 700, color: "#EEF0F4", lineHeight: 1 }}>
-                        {s.num}
-                      </div>
-                    </div>
-
-                    <h3 style={{ fontWeight: 700, fontSize: "1rem", color: "#1E3A5F", marginBottom: 8, lineHeight: 1.3 }}>
-                      {s.title}
-                    </h3>
-                    <p style={{ fontSize: "0.85rem", color: "#64748B", lineHeight: 1.7 }}>
-                      {s.desc}
-                    </p>
-
-                    {/* Bottom accent tag */}
-                    <div style={{ marginTop: 16, display: "inline-flex", alignItems: "center", gap: 5, fontSize: "11px", fontWeight: 600, color: s.color, background: s.bg, border: `1px solid ${s.border}`, borderRadius: "100px", padding: "4px 10px" }}>
-                      {i === 0 && "⏱️ ~2 menit"}
-                      {i === 1 && "⚡ Hasil instan"}
-                      {i === 2 && "💰 Gratis selamanya"}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA bottom */}
-          <div style={{ textAlign: "center", marginTop: 32 }}>
-            <button
-              onClick={() => document.getElementById("discover")?.scrollIntoView({ behavior: "smooth" })}
-              style={{
-                background: "linear-gradient(135deg, #1F7A63, #25957A)", color: "#fff",
-                border: "none", borderRadius: 12, padding: "13px 32px",
-                fontWeight: 600, fontSize: "0.95rem", cursor: "pointer",
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                boxShadow: "0 4px 16px rgba(31,122,99,0.3)",
-                transition: "all 0.2s ease",
-              }}
-              onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 24px rgba(31,122,99,0.4)" }}
-              onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 16px rgba(31,122,99,0.3)" }}
+          {steps.map((step, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.2, duration: 0.8 }}
+              whileHover={{ y: -15 }}
+              className="group relative bg-slate-900/40 backdrop-blur-2xl border border-white/10 rounded-[56px] p-10 shadow-2xl transition-all duration-500 hover:border-[#1F7A63]/50"
             >
-              Coba Sekarang — Gratis! 🚀
+              {/* Watermark Number */}
+              <div className="absolute top-8 right-12 text-8xl font-black text-white/[0.03] italic select-none group-hover:text-[#1F7A63]/10 transition-colors">
+                {step.id}
+              </div>
+
+              {/* Icon Container */}
+              <div className="relative mb-10">
+                <div className="w-20 h-20 rounded-[28px] bg-slate-800 flex items-center justify-center shadow-inner border border-white/5 group-hover:scale-110 transition-transform duration-500">
+                  <step.icon className="w-9 h-9" style={{ color: step.color }} />
+                </div>
+                <div className="absolute -bottom-2 -right-2 bg-[#0F172A] p-1.5 rounded-full border border-white/10">
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                </div>
+              </div>
+
+              {/* Tag Label */}
+              <div className="inline-block px-3 py-1 rounded-lg bg-white/5 border border-white/5 text-[9px] font-black uppercase tracking-widest text-slate-500 mb-6">
+                {step.tag}
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-4 tracking-tight group-hover:text-[#F0D060] transition-colors uppercase leading-none">
+                {step.title}
+              </h3>
+              
+              <p className="text-slate-400 text-sm leading-relaxed font-medium mb-10">
+                {step.desc}
+              </p>
+
+              {/* Decorative Button Element */}
+              <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-[#1F7A63] opacity-40 group-hover:opacity-100 transition-all">
+                Learn Engine <ArrowRight className="w-4 h-4" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* FOOTER CTA SECTION */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          className="mt-24 p-1 rounded-[40px] bg-gradient-to-r from-transparent via-white/10 to-transparent"
+        >
+          <div className="bg-[#0F172A] rounded-[40px] px-10 py-12 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex items-center gap-6">
+               <div className="w-14 h-14 rounded-2xl bg-[#1F7A63]/10 flex items-center justify-center">
+                  <Zap className="text-[#F0D060] w-7 h-7" />
+               </div>
+               <div className="text-left">
+                  <h4 className="text-white font-bold text-lg">Siap mengeksekusi potensimu?</h4>
+                  <p className="text-slate-500 text-sm">Gunakan mesin AI kami untuk hasil yang akurat.</p>
+               </div>
+            </div>
+            <button className="w-full md:w-auto px-10 py-4 bg-white text-[#0F172A] font-black rounded-2xl hover:bg-[#F0D060] transition-all uppercase tracking-widest text-xs shadow-xl shadow-white/5">
+              Analyze Now
             </button>
           </div>
+        </motion.div>
 
-        </div>
-      </section>
-    </>
-  )
+      </div>
+    </section>
+  );
 }

@@ -1,0 +1,294 @@
+/* ============================================================
+   KARYANUSA — Global Dark Mode Styles
+   Import this in main.tsx or index.css
+   Aktif ketika <html class="dark"> ditambahkan
+   ============================================================ */
+
+/* ── BASE ── */
+html.dark body {
+  background-color: #0F172A;
+  color: #E2E8F0;
+}
+
+/* ── BACKGROUNDS ── */
+html.dark .hero-section,
+html.dark section[id="home"] {
+  background: linear-gradient(155deg, #0F2337 0%, #0F172A 55%, #111827 100%) !important;
+}
+
+html.dark .navbar {
+  background: #0F1F35 !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.4) !important;
+}
+
+html.dark section,
+html.dark .skill-section,
+html.dark .opp-section,
+html.dark .story-section,
+html.dark .analytics-section,
+html.dark .calc-section,
+html.dark .gap-section,
+html.dark .community-section,
+html.dark .chat-section {
+  background-color: #0F172A !important;
+}
+
+/* ── CARDS & BOXES ── */
+html.dark .hero-card,
+html.dark .income-card,
+html.dark .calc-card,
+html.dark .opp-card,
+html.dark .badge-card,
+html.dark .phase-card,
+html.dark .community-card,
+html.dark .comm-card,
+html.dark .gap-card,
+html.dark .story-wrap > div,
+html.dark [class*="bg-white"],
+html.dark div[style*="background: #fff"],
+html.dark div[style*="background:#fff"],
+html.dark div[style*='background: "#fff"'] {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+
+/* ── TEXT COLORS ── */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4 {
+  color: #F1F5F9 !important;
+}
+
+html.dark p,
+html.dark span:not([class*="badge"]):not([class*="tag"]):not([class*="chip"]) {
+  color: #94A3B8 !important;
+}
+
+html.dark strong {
+  color: #E2E8F0 !important;
+}
+
+/* ── INPUTS ── */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #475569 !important;
+}
+
+html.dark .chat-input,
+html.dark .chat-input-pop,
+html.dark .chat-inp,
+html.dark .calc-select,
+html.dark .feedback-input,
+html.dark .feedback-textarea {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+
+/* ── SECTION BACKGROUNDS ── */
+html.dark [style*="background: #F6F5F2"],
+html.dark [style*="background:#F6F5F2"],
+html.dark [style*="background: \"#F6F5F2\""] {
+  background-color: #0F172A !important;
+}
+
+html.dark [style*="background: #F8FAFB"],
+html.dark [style*="background:#F8FAFB"],
+html.dark [style*="background: #F8FAF"] {
+  background-color: #1E293B !important;
+}
+
+html.dark [style*="background: #fff"],
+html.dark [style*="background:#fff"],
+html.dark [style*="background: white"] {
+  background-color: #1E293B !important;
+}
+
+html.dark [style*="background: #F1F5F9"],
+html.dark [style*="background:#F1F5F9"] {
+  background-color: #1E293B !important;
+}
+
+html.dark [style*="background: #EEF0F4"],
+html.dark [style*="background:#EEF0F4"] {
+  background-color: #334155 !important;
+}
+
+/* ── BORDERS ── */
+html.dark [style*="border: 1px solid #EEF0F4"],
+html.dark [style*="border: 1.5px solid #EEF0F4"],
+html.dark [style*="border-color: #EEF0F4"],
+html.dark [style*="border: 1px solid #E2E8F0"],
+html.dark [style*="border: 1.5px solid #E2E8F0"] {
+  border-color: #334155 !important;
+}
+
+/* ── TAILWIND UTILITY OVERRIDES ── */
+html.dark .bg-white { background-color: #1E293B !important; }
+html.dark .bg-gray-100 { background-color: #1E293B !important; }
+html.dark .bg-\[\#F6F5F2\] { background-color: #0F172A !important; }
+html.dark .bg-\[\#F8FAFB\] { background-color: #1E293B !important; }
+html.dark .text-gray-600 { color: #94A3B8 !important; }
+html.dark .text-gray-400 { color: #64748B !important; }
+html.dark .text-\[\#2B2B2B\] { color: #E2E8F0 !important; }
+html.dark .border-gray-100,
+html.dark .border-gray-200 { border-color: #334155 !important; }
+html.dark .shadow-sm { box-shadow: 0 1px 6px rgba(0,0,0,0.3) !important; }
+
+/* ── NAVBAR LINKS ── */
+html.dark .nav-link { color: rgba(255,255,255,0.7) !important; }
+html.dark .nav-link:hover { color: #fff !important; }
+html.dark .mobile-link { color: rgba(255,255,255,0.75) !important; }
+
+/* ── FOOTER (already dark gradient, no override needed) ── */
+
+/* ── WAVE DIVIDER ── */
+html.dark .wave-divider path,
+html.dark svg path[fill="#F6F5F2"],
+html.dark svg path[fill="#ffffff"],
+html.dark svg path[fill="white"] {
+  fill: #0F172A !important;
+}
+
+/* ── BACK TO TOP ── */
+html.dark .back-to-top-btn {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+
+/* ── MODAL ── */
+html.dark .modal-box {
+  background: #1E293B !important;
+  color: #E2E8F0 !important;
+}
+html.dark .modal-overlay {
+  background: rgba(0,0,0,0.75) !important;
+}
+
+/* ── ANALYTICS BARS ── */
+html.dark .analytics-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* ── JOURNEY PANEL ── */
+html.dark .jp-sidebar {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+html.dark .jp-content { background: #0F172A !important; }
+html.dark .jp-bottomnav {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+html.dark .jp-root { background: #0F172A !important; }
+
+/* ── CHAT MESSAGES ── */
+html.dark .msg-ai {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+html.dark .chat-msgs { background: #0F172A !important; }
+
+/* ── OPTION BUTTONS (questionnaire) ── */
+html.dark .opt-btn {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+html.dark .opt-btn:hover {
+  border-color: #1F7A63 !important;
+  background: rgba(31,122,99,0.1) !important;
+}
+html.dark .opt-btn.selected,
+html.dark .opt-btn.sel {
+  background: rgba(31,122,99,0.15) !important;
+  border-color: #1F7A63 !important;
+}
+
+/* ── JOURNEY CARDS ── */
+html.dark .journey-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* ── CHIPS & FILTERS ── */
+html.dark .chip,
+html.dark .chip-btn,
+html.dark .filter-btn {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+  color: #94A3B8 !important;
+}
+html.dark .filter-btn.active {
+  background: #1F7A63 !important;
+  border-color: #1F7A63 !important;
+  color: #fff !important;
+}
+
+/* ── SCROLL BARS ── */
+html.dark ::-webkit-scrollbar-thumb { background: #334155 !important; }
+html.dark ::-webkit-scrollbar-track { background: #1E293B !important; }
+
+/* ── ROADMAP TOAST ── */
+html.dark .roadmap-toast {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* ── PWA TOAST ── */
+html.dark .pwa-toast {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* ── SUCCESS STORY ── */
+html.dark .thumb-btn {
+  background: transparent !important;
+  border-color: #334155 !important;
+}
+html.dark .story-card {
+  background: #1E293B !important;
+}
+
+/* ── SKILL GAP CARD ── */
+html.dark .gap-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* ── INCOME CALCULATOR OUTPUT ── */
+html.dark .output-box {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* ── COMMUNITY CARD ── */
+html.dark .comm-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* ── BADGE CARD ── */
+html.dark .badge-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}
+
+/* ── PHASE CARD ── */
+html.dark .phase-card {
+  background: #1E293B !important;
+  border-color: #334155 !important;
+}

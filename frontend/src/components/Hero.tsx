@@ -1,204 +1,112 @@
-export default function Hero() {
+import { motion, type Variants } from "framer-motion";
+import { Sparkles, Bot, Code2, Target, Lock, TrendingUp, Zap, ArrowRight } from "lucide-react";
+
+type Props = { onGetStarted: () => void };
+
+export default function Hero({ onGetStarted }: Props) {
   const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 100;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+    }
+  };
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
   };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
-        .hero-section { font-family: 'Plus Jakarta Sans', sans-serif; }
+    <section
+      id="home"
+      className="relative w-full pt-40 pb-20 bg-[#0F172A] flex items-center overflow-hidden min-h-screen"
+    >
+      {/* Background Glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-[#1F7A63]/20 rounded-full blur-[120px]"
+        />
+        <motion.div
+          animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.3, 0.1] }}
+          transition={{ duration: 15, repeat: Infinity, delay: 2 }}
+          className="absolute bottom-[-5%] left-[-5%] w-[500px] h-[500px] bg-[#F0D060]/10 rounded-full blur-[120px]"
+        />
+      </div>
 
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes cardFloat {
-          0%, 100% { transform: translateY(0px); }
-          50%       { transform: translateY(-9px); }
-        }
-        @keyframes shimmer {
-          0%   { background-position: -200% center; }
-          100% { background-position:  200% center; }
-        }
-        @keyframes pulseDot {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50%       { transform: scale(1.6); opacity: 0.3; }
-        }
-        @keyframes blobMove {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          50%       { transform: translate(14px,-10px) scale(1.04); }
-        }
-        @keyframes rowSlideIn {
-          from { opacity: 0; transform: translateX(-12px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-8 lg:px-14 grid lg:grid-cols-2 gap-16 xl:gap-24 items-center">
+        
+        {/* KIRI: CONTENT */}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-xl text-center lg:text-left">
+          <motion.div variants={itemVariants} className="inline-flex items-center gap-2 mb-8 px-4 py-2 bg-white/5 border border-white/10 rounded-full mx-auto lg:mx-0">
+            <Zap className="w-3.5 h-3.5 text-[#F0D060] fill-[#F0D060]" />
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Next-Gen AI Platform</span>
+          </motion.div>
+          
+          <motion.h1 variants={itemVariants} className="font-serif text-5xl md:text-7xl font-bold text-white leading-[1.05] mb-8 tracking-tight">
+            Temukan Potensi <br/> 
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F0D060] via-[#1F7A63] to-[#F0D060] animate-shimmer bg-[length:200%_auto]">Keterampilanmu</span> <br/> 
+            <span className="text-white/90 font-sans">dengan AI.</span>
+          </motion.h1>
+          
+          <motion.p variants={itemVariants} className="text-slate-400 text-lg md:text-xl mb-12 max-w-md mx-auto lg:mx-0 leading-relaxed font-medium">
+            Ubah keahlian sehari-hari menjadi sumber <span className="text-[#F0D060] font-bold">aset ekonomi</span> melalui bimbingan AI Mentor.
+          </motion.p>
+          
+          <motion.div variants={itemVariants} className="flex flex-wrap justify-center lg:justify-start gap-5">
+            <button onClick={onGetStarted} className="px-8 py-4 bg-[#1F7A63] text-white font-black rounded-2xl hover:bg-[#25957A] transition-all shadow-xl hover:scale-105 active:scale-95 uppercase text-[10px] tracking-widest">
+              Mulai Analisis
+            </button>
+            <button onClick={() => scrollTo('how-it-works')} className="px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all flex items-center gap-2 text-[10px] tracking-widest uppercase">
+              Pelajari Fitur <ArrowRight className="w-4 h-4" />
+            </button>
+          </motion.div>
+        </motion.div>
 
-        .anim-1 { animation: fadeUp 0.65s ease both; }
-        .anim-2 { animation: fadeUp 0.65s ease 0.12s both; }
-        .anim-3 { animation: fadeUp 0.65s ease 0.22s both; }
-        .anim-4 { animation: fadeUp 0.65s ease 0.34s both; }
-        .anim-card { animation: fadeUp 0.65s ease 0.15s both, cardFloat 5s ease-in-out 1s infinite; }
-        .row-1 { animation: rowSlideIn 0.4s ease 0.55s both; }
-        .row-2 { animation: rowSlideIn 0.4s ease 0.7s both; }
-        .row-3 { animation: rowSlideIn 0.4s ease 0.85s both; }
-
-        .gold-shimmer {
-          background: linear-gradient(90deg, #C9A84C, #F0D060, #C9A84C, #A8832A);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmer 3.5s linear infinite;
-        }
-
-        .btn-primary-hero {
-          background: linear-gradient(135deg, #1F7A63, #25957A);
-          color: #fff; font-weight: 600; padding: 14px 28px; border-radius: 13px; border: none;
-          cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          box-shadow: 0 4px 18px rgba(31,122,99,0.32); white-space: nowrap;
-        }
-        .btn-primary-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(31,122,99,0.42); }
-
-        .btn-secondary-hero {
-          background: transparent; color: #1E3A5F; font-weight: 600;
-          padding: 14px 28px; border-radius: 13px; border: 1.5px solid #CBD5E1;
-          cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px;
-          transition: all 0.2s ease; white-space: nowrap;
-        }
-        .btn-secondary-hero:hover { border-color: #1F7A63; color: #1F7A63; background: rgba(31,122,99,0.04); }
-
-        .hero-card {
-          background: #fff; border-radius: 22px; padding: 26px;
-          box-shadow: 0 20px 56px rgba(30,58,95,0.12), 0 4px 14px rgba(30,58,95,0.06);
-          border: 1px solid rgba(30,58,95,0.07);
-        }
-        .card-row {
-          display: flex; align-items: center; gap: 11px;
-          padding: 12px 14px; border-radius: 11px; margin-bottom: 9px;
-        }
-        .card-row-neutral { background: #F8F9FB; }
-        .card-row-green   { background: rgba(31,122,99,0.08); border: 1px solid rgba(31,122,99,0.14); }
-        .card-row-gold    { background: rgba(212,175,55,0.07); border: 1px solid rgba(212,175,55,0.18); }
-
-        .stat-num   { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 700; color: #1F7A63; }
-        .stat-label { font-size: 12px; color: #94A3B8; margin-top: 2px; }
-        .stat-divider { width: 1px; height: 30px; background: #E2E8F0; }
-
-        .btn-hero-wrap { display: flex; flex-direction: column; gap: 12px; }
-        @media (min-width: 480px) { .btn-hero-wrap { flex-direction: row; } }
-      `}</style>
-
-      <section id="home" className="hero-section relative overflow-hidden" style={{
-        background: "linear-gradient(155deg, #EEF6F4 0%, #F6F5F2 55%, #EBF1F8 100%)",
-        paddingTop: "100px",
-        paddingBottom: "100px",
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-      }}>
-        {/* Blobs */}
-        <div aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: "-80px", right: "-80px", width: "500px", height: "500px", borderRadius: "50%", background: "radial-gradient(circle, rgba(31,122,99,0.1) 0%, transparent 70%)", animation: "blobMove 9s ease-in-out infinite" }} />
-          <div style={{ position: "absolute", bottom: "-60px", left: "-60px", width: "420px", height: "420px", borderRadius: "50%", background: "radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)", animation: "blobMove 11s ease-in-out infinite reverse" }} />
-        </div>
-
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-14">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-
-            {/* Left */}
-            <div>
-              <div className="anim-1 inline-flex items-center gap-2 mb-6" style={{ background: "rgba(31,122,99,0.09)", border: "1px solid rgba(31,122,99,0.22)", borderRadius: "100px", padding: "7px 16px" }}>
-                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#1F7A63", display: "inline-block", animation: "pulseDot 2s ease-in-out infinite" }} />
-                <span style={{ fontSize: "13px", color: "#1F7A63", fontWeight: 500 }}>Platform AI · Gratis untuk Semua</span>
+        {/* KANAN: COMPACT AI CARD */}
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex justify-center lg:justify-end">
+          <motion.div
+            animate={{ y: [-10, 10, -10] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="bg-slate-900/60 backdrop-blur-xl rounded-[40px] p-8 md:p-10 border border-white/10 shadow-2xl w-full max-w-[380px] relative z-10"
+          >
+            <div className="flex items-center justify-between mb-8 pb-6 border-b border-white/5">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#1F7A63] to-[#25957A] rounded-xl flex items-center justify-center text-white"><Bot className="w-7 h-7" /></div>
+                <div><div className="font-bold text-white text-sm uppercase">KARYANUSA AI</div><div className="text-[9px] font-black text-green-400 uppercase tracking-widest">Ready...</div></div>
               </div>
-
-              <h1 className="anim-2" style={{ fontFamily: "'Lora', Georgia, serif", fontSize: "clamp(2.4rem, 5vw, 4rem)", fontWeight: 700, lineHeight: 1.12, color: "#1E3A5F", letterSpacing: "-0.025em", marginBottom: "1.4rem" }}>
-                Temukan Potensi<br />
-                <span className="gold-shimmer">Keterampilanmu</span><br />
-                <span style={{ color: "#1F7A63" }}>dengan AI</span>
-              </h1>
-
-              <p className="anim-3" style={{ fontSize: "1.05rem", lineHeight: 1.75, color: "#64748B", maxWidth: "460px", marginBottom: "2rem" }}>
-                Platform AI yang membantu masyarakat mengubah skill sehari-hari menjadi{" "}
-                <strong style={{ color: "#1E3A5F", fontWeight: 600 }}>peluang ekonomi nyata</strong>{" "}
-                — tanpa perlu pengalaman bisnis sebelumnya.
-              </p>
-
-              <div className="anim-3 btn-hero-wrap" style={{ marginBottom: "2.5rem" }}>
-                <button className="btn-primary-hero" onClick={() => scrollTo("discover")}>🚀 Mulai Analisis Skill</button>
-                <button className="btn-secondary-hero" onClick={() => scrollTo("assistant")}>Coba AI Assistant →</button>
-              </div>
-
-              <div className="anim-4" style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "20px" }}>
-                {[
-                  { num: "10K+", label: "Pengguna Aktif" },
-                  { num: "50+",  label: "Peluang Usaha" },
-                  { num: "95%",  label: "Kepuasan User" },
-                ].map((s, i) => (
-                  <>
-                    <div key={s.num}>
-                      <div className="stat-num">{s.num}</div>
-                      <div className="stat-label">{s.label}</div>
-                    </div>
-                    {i < 2 && <div className="stat-divider" key={`d${i}`} />}
-                  </>
-                ))}
-              </div>
+              <div className="flex gap-1.5"><div className="w-2 h-2 rounded-full bg-red-500/50" /><div className="w-2 h-2 rounded-full bg-yellow-500/50" /><div className="w-2 h-2 rounded-full bg-green-500/50" /></div>
             </div>
-
-            {/* Right: Card */}
-            <div className="anim-card">
-              <div className="hero-card">
-                <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 20 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 11, background: "linear-gradient(135deg, #1F7A63, #25957A)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 19, flexShrink: 0 }}>🤖</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, color: "#1E3A5F", fontSize: 15 }}>AI Skill Analysis</div>
-                    <div style={{ fontSize: 12, color: "#94A3B8" }}>Menganalisis potensi kamu...</div>
-                  </div>
-                  <div style={{ display: "flex", gap: 5, flexShrink: 0 }}>
-                    {["#FF5F57","#FEBC2E","#28C840"].map(c => <div key={c} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />)}
-                  </div>
-                </div>
-
-                <div className="card-row card-row-neutral row-1">
-                  <span style={{ fontSize: 20, flexShrink: 0 }}>💻</span>
-                  <div>
-                    <div style={{ fontSize: 11, color: "#94A3B8" }}>Skill Terdeteksi</div>
-                    <div style={{ fontWeight: 600, color: "#1E3A5F", fontSize: 14 }}>Programming</div>
-                  </div>
-                </div>
-                <div className="card-row card-row-green row-2">
-                  <span style={{ fontSize: 20, flexShrink: 0 }}>🎯</span>
-                  <div>
-                    <div style={{ fontSize: 11, color: "#1F7A63" }}>Peluang Terbaik</div>
-                    <div style={{ fontWeight: 600, color: "#1F7A63", fontSize: 14 }}>Freelance Developer</div>
-                  </div>
-                </div>
-                <div className="card-row card-row-gold row-3" style={{ marginBottom: 0 }}>
-                  <span style={{ fontSize: 20, flexShrink: 0 }}>📈</span>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 11, color: "#B8942A" }}>Market Demand</div>
-                    <div style={{ fontWeight: 600, color: "#C9A84C", fontSize: 14 }}>High</div>
-                  </div>
-                  <div style={{ width: 64, height: 6, borderRadius: 3, background: "rgba(212,175,55,0.15)", overflow: "hidden", flexShrink: 0 }}>
-                    <div style={{ width: "85%", height: "100%", background: "linear-gradient(90deg,#C9A84C,#F0D060)", borderRadius: 3 }} />
-                  </div>
-                </div>
-
-                <button className="btn-primary-hero" onClick={() => scrollTo("discover")} style={{ width: "100%", marginTop: 18, textAlign: "center" }}>
-                  Analisis Skillmu Sekarang ✨
-                </button>
-                <p style={{ textAlign: "center", fontSize: 12, color: "#94A3B8", marginTop: 10 }}>
-                  🔒 Gratis · Tanpa daftar · Hasil instan
-                </p>
-              </div>
+            <div className="space-y-4">
+               <div className="p-5 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-4">
+                  <Code2 className="w-5 h-5 text-slate-400" />
+                  <div><div className="text-[9px] text-slate-500 font-black uppercase">Skill</div><div className="font-bold text-white text-sm">Engineering</div></div>
+               </div>
+               <div className="p-5 bg-[#1F7A63]/10 rounded-2xl border border-[#1F7A63]/20 flex items-center gap-4">
+                  <Target className="w-5 h-5 text-[#1F7A63]" />
+                  <div><div className="text-[9px] text-[#1F7A63] font-black uppercase">Opportunity</div><div className="font-bold text-white text-sm">SaaS Expert</div></div>
+               </div>
             </div>
-
-          </div>
-        </div>
-      </section>
-    </>
+            <button onClick={onGetStarted} className="w-full mt-8 py-4 bg-white text-[#0F172A] font-black rounded-xl hover:bg-[#F0D060] transition-all flex items-center justify-center gap-2 uppercase text-[10px] tracking-widest shadow-xl">
+              Start Analyze
+            </button>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
   );
 }
