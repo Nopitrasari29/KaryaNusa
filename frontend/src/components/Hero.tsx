@@ -1,5 +1,5 @@
 import { motion, type Variants } from "framer-motion";
-import { Sparkles, Bot, Code2, Target, Lock, TrendingUp, Zap, ArrowRight } from "lucide-react";
+import { Bot, Code2, Target, Zap, ArrowRight } from "lucide-react";
 
 type Props = { onGetStarted: () => void };
 
