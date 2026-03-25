@@ -73,7 +73,10 @@ export default function AnalyticsDashboard() {
             </div>
             <div className="space-y-5">
               {sorted.map((item, i) => {
-                const Icon = skillIcons[item._id] || Globe;
+                const foundIconKey = Object.keys(skillIcons).find(
+                  key => key.toLowerCase() === item._id.toLowerCase()
+                );
+                const Icon = foundIconKey ? skillIcons[foundIconKey] : Globe;
                 const percentage = (item.count / maxCount) * 100;
                 return (
                   <div key={i} className="group">

@@ -1,15 +1,30 @@
-import { useState } from "react"
-import { communityPosts } from "../services/karyanusaData"
+import { useState, useEffect } from "react"
+import axios from "axios"
 
 export default function CommunityBoard() {
+  const [posts, setPosts] = useState<any[]>([])
   const [likedPosts, setLikedPosts] = useState<Record<number, boolean>>({})
   const [filterSkill, setFilterSkill] = useState("Semua")
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/community`);
+        setPosts(res.data);
+      } catch (e) {
+        console.error("Gagal ambil postingan komunitas");
+      } finally { setLoading(false); }
+    };
+    fetchPosts();
+  }, []);
 
   const filtered = filterSkill === "Semua"
-    ? communityPosts
-    : communityPosts.filter(p => p.skill === filterSkill)
+    ? posts
+    : posts.filter(p => p.skill === filterSkill)
 
-  const skills = ["Semua", ...Array.from(new Set(communityPosts.map(p => p.skill)))]
+  const skills = ["Semua", ...Array.from(new Set(posts.map(p => p.skill).filter(Boolean)))]
+  if (loading) return <p className="text-center py-20 text-slate-400">Menyinkronkan Cerita Komunitas...</p>
 
   return (
     <>
@@ -59,7 +74,9 @@ export default function CommunityBoard() {
                   </div>
                   <div style={{ minWidth: 0 }}>
                     <div style={{ fontWeight: 700, fontSize: ".88rem", color: "#1E3A5F" }}>{post.name}</div>
-                    <div style={{ fontSize: "10px", color: "#94A3B8" }}>{post.time}</div>
+                    <div style={{ fontSize: "10px", color: "#94A3B8" }}>
+                      {new Date(post.createdAt).toLocaleDateString('id-ID')}
+                    </div>
                   </div>
                 </div>
                 <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 8 }}>
