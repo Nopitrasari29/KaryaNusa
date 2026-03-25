@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 // 2. Middleware Utama
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' })); 
+app.use(cors({ origin: "*" })); 
 app.use(express.json()); // Parsing body JSON
 
 // 3. Monitor Koneksi MongoDB (Sangat membantu untuk Debug di Railway)

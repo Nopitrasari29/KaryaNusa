@@ -17,11 +17,31 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => {
     const fetchStats = async () => {
+      // Daftar skill wajib tampil
+      const mandatorySkills = [
+        "Programming", "Desain Grafis", "Marketing", "Menulis", "Fotografi", "Public Speaking"
+      ];
+
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/analytics/stats`);
-        if (res.data.skillDistribution) setData(res.data.skillDistribution);
+        const realData = res.data.skillDistribution; // Ambil data dari MongoDB
+
+        // --- PROSES MERGING (KUNCI AGAR TIDAK HILANG) ---
+        const mergedData = mandatorySkills.map(skillName => {
+          // Cari apakah skill ini ada di database?
+          const found = realData.find((d: any) => d._id?.toLowerCase() === skillName.toLowerCase());
+          return {
+            _id: skillName,
+            count: found ? found.count : 0 // Jika tidak ada, pasang angka 0
+          };
+        });
+
+        setData(mergedData);
         if (res.data.activeUsers) setTotalUsers(res.data.activeUsers);
+        console.log("Analytics Synced! ✅");
+
       } catch (e) {
+        console.log("Backend offline, menggunakan data dummy");
         setTotalUsers(1259);
         setData([
           { _id: "Programming", count: 420 }, { _id: "Desain Grafis", count: 310 },

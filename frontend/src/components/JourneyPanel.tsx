@@ -88,7 +88,7 @@ export default function JourneyPanel({ onClose }: Props) {
   }, [messages, loading, menu])
 
   // --- HANDLERS ---
-  const handleNext = () => {
+  const handleNext = async () => {
     if (selected === null) return
     const newAnswers = [...answers, selected]
     if (current < questions.length - 1) { 
@@ -96,9 +96,39 @@ export default function JourneyPanel({ onClose }: Props) {
       setCurrent(current + 1)
       setSelected(null) 
     } else { 
-      setSkillResult(detectSkill(newAnswers))
-      setAnswers(newAnswers)
-      setChecked({}) 
+      setLoading(true) // Nyalakan loading
+      try {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/skill/analyze`, {
+          sessionId: localStorage.getItem('karyanusa_session') || 'sess-' + Date.now(),
+          answers: newAnswers,
+          questionnaireData: newAnswers.map((ans, idx) => ({ 
+            q: questions[idx].question, 
+            a: questions[idx].options[ans].label 
+          }))
+        });
+
+        // Simpan data hasil dari AI (Groq)
+        localStorage.setItem('karyanusa_session', response.data.sessionId);
+        localStorage.setItem('user_identified_skill', response.data.skillResult);
+
+        setSkillResult({ 
+          skill: response.data.skillResult, 
+          score: response.data.confidenceScore,
+          // reasoning: response.data.reasoning (Opsional jika ingin disimpan di state)
+        })
+        
+        setAnswers(newAnswers)
+        setChecked({}) 
+
+      } catch (error) {
+        console.error("AI Gagal, pake cadangan lokal", error);
+        // Fallback (Cadangan) kalau internet atau backend mati
+        setSkillResult(detectSkill(newAnswers))
+        setAnswers(newAnswers)
+        setChecked({}) 
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
@@ -708,21 +738,21 @@ export default function JourneyPanel({ onClose }: Props) {
                   <div className="space-y-3 flex-1">
                     <div className="space-y-3">
                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-6">Nama Profil</label>
-                       <input className="w-full h-11 px-4 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-white outline-none focus:border-[#1F7A63] transition-all"
+                       <input className="w-full h-11 px-4 bg-[#1E293B] border border-white/10 rounded-xl text-sm font-medium text-white outline-none focus:border-[#1F7A63] transition-all placeholder:text-slate-500"
                         placeholder="Nama kamu..." value={newPost.name} onChange={e => setNewPost(p => ({...p, name: e.target.value}))} />
                     </div>
                     <div className="space-y-3">
                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-6">Kategori Keahlian</label>
-                       <select className="w-full h-11 px-4 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-white outline-none focus:border-[#1F7A63] transition-all cursor-pointer appearance-none"
+                       <select className="w-full h-11 px-4 bg-[#1E293B] border border-white/10 rounded-xl text-sm font-medium text-white outline-none focus:border-[#1F7A63] transition-all cursor-pointer"
                         value={newPost.skill} onChange={e => setNewPost(p => ({...p, skill: e.target.value}))}>
                           {["Programming", "Desain Grafis", "Fotografi", "Menulis", "Marketing", "Public Speaking"].map(s => (
-                            <option key={s} value={s}>{s}</option>
+                            <option key={s} value={s} style={{ background: "#1E293B", color: "#fff" }}>{s}</option>
                           ))}
                        </select>
                     </div>
                     <div className="space-y-3">
                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] ml-6">Inspirasi Kamu</label>
-                       <textarea className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-sm font-medium text-white outline-none focus:border-[#1F7A63] transition-all min-h-[100px] resize-none"
+                       <textarea className="w-full p-4 bg-[#1E293B] border border-white/10 rounded-xl text-sm font-medium text-white outline-none focus:border-[#1F7A63] transition-all min-h-[100px] resize-none placeholder:text-slate-500"
                         placeholder="Bagaimana Karyanusa membantu kamu mendapatkan hasil nyata?" value={newPost.text} onChange={e => setNewPost(p => ({...p, text: e.target.value}))} />
                     </div>
                   </div>

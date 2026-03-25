@@ -23,6 +23,12 @@ export default function HomePage() {
 
   useEffect(() => { 
     setIsLoaded(true) 
+
+    const savedSkill = localStorage.getItem('user_identified_skill')
+    if (savedSkill) {
+      setPanelOpen(true)
+      console.log("Sesi Ditemukan: Mengembalikan user ke Roadmap", savedSkill)
+    }
   }, [])
 
   // VARIANT UNTUK SENSASI SCROLL REPEATABLE (MUNCUL BOLAK BALIK)
