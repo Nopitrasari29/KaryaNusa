@@ -1,8 +1,37 @@
 # 🌿 KaryaNusa
 
-> Platform AI yang membantu masyarakat mengubah skill sehari-hari menjadi peluang ekonomi nyata.
+## 🏫 Institusi
+Institut Teknologi Sepuluh Nopember
 
-**Subtema:** Ekonomi + Sosial | **Stack:** React + TypeScript + Vite + TailwindCSS
+---
+
+## 👥 Anggota Tim
+- Ketua      : Aswalia Novitriasari
+- Anggota 1  : Rafika Az Zahra Kusumastuti
+- Anggota 2  : Nisrina Atiqah Dwiputri Ridzki
+
+---
+
+## 📖 Deskripsi Karya
+KaryaNusa merupakan platform berbasis AI yang membantu masyarakat mengubah skill sehari-hari menjadi peluang ekonomi nyata.
+
+Website ini dikembangkan dengan latar belakang meningkatnya kebutuhan masyarakat terhadap pemanfaatan keterampilan yang dimiliki agar dapat menghasilkan nilai ekonomi. Banyak individu memiliki potensi, namun belum mengetahui bagaimana cara mengembangkannya menjadi peluang usaha yang konkret.
+
+KaryaNusa hadir sebagai solusi dengan pendekatan teknologi berbasis Artificial Intelligence (AI) untuk membantu pengguna mengenali skill dominan mereka, memberikan rekomendasi peluang usaha, serta menyediakan roadmap bisnis yang terstruktur.
+
+### 🎯 Tujuan
+- Membantu pengguna mengenali skill dominan mereka
+- Memberikan rekomendasi peluang usaha berbasis AI
+- Menyediakan roadmap bisnis yang terarah dan sistematis
+- Mendukung pengembangan ekonomi kreatif berbasis individu
+
+### 💡 Manfaat
+- Membuka peluang usaha baru berbasis skill
+- Meningkatkan kemandirian ekonomi masyarakat
+- Mempermudah proses belajar dan pengembangan skill
+- Mendorong inovasi dalam pemanfaatan teknologi AI
+
+KaryaNusa mengusung subtema **Ekonomi + Sosial** dengan tujuan memberikan dampak nyata bagi masyarakat luas.
 
 ---
 
